@@ -1,0 +1,15 @@
+/Shopping-Admin-web/assets/*
+/Shopping-Admin-web/index.html
+/Shopping-Admin-web/client/node_modules
+/Shopping-Admin-web/client/dist
+Debug/
+Release/
+js/
+css/
+*.suo
+*.user
+_ReSharper.*
+bin/
+obj/
+packages
+Uploads/
