@@ -1,14 +1,9 @@
 <template>
-  <div class="home">
-    <NavBar />
-  </div>
+  <div class="home"></div>
 </template>
 
 <script>
-import NavBar from '../components/NavBar.vue';
-
 export default {
   name: 'HomeView',
-  components: { NavBar },
 };
 </script>
