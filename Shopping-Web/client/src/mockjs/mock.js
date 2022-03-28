@@ -59,11 +59,11 @@ const GetProductList = () => {
         updatedDate: '2022-03-17T15:43:55.653',
       },
       {
+        id: '3',
         amount: 243,
         createdDate: '2022-03-17T15:43:55.653',
         description: 'desc2',
         enabled: false,
-        id: '23',
         name: 'test2',
         picture: 'https://picsum.photos/200',
         price: 1,
@@ -71,7 +71,7 @@ const GetProductList = () => {
         updatedDate: '2022-03-17T15:43:55.653',
       },
       {
-        id: '76',
+        id: '4',
         name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
         amount: 1,
         createdDate: '2022-03-17T15:43:55.653',
@@ -85,7 +85,7 @@ const GetProductList = () => {
       },
 
       {
-        id: '1',
+        id: '5',
         name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
         amount: 1,
         createdDate: '2022-03-17T15:43:55.653',
@@ -98,7 +98,7 @@ const GetProductList = () => {
         updatedDate: '2022-03-17T15:43:55.653',
       },
       {
-        id: '2',
+        id: '6',
         name: 'test',
         amount: 1,
         createdDate: '2022-03-17T15:43:55.653',
@@ -110,11 +110,11 @@ const GetProductList = () => {
         updatedDate: '2022-03-17T15:43:55.653',
       },
       {
+        id: '7',
         amount: 243,
         createdDate: '2022-03-17T15:43:55.653',
         description: 'desc2',
         enabled: false,
-        id: '23',
         name: 'test2',
         picture: 'https://picsum.photos/200',
         price: 1,
@@ -122,7 +122,7 @@ const GetProductList = () => {
         updatedDate: '2022-03-17T15:43:55.653',
       },
       {
-        id: '76',
+        id: '8',
         name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
         amount: 1,
         createdDate: '2022-03-17T15:43:55.653',

@@ -5,7 +5,7 @@ export default {
     search: '搜尋',
     add: '新增',
     success: '操作成功',
-    account: '密碼',
+    account: '帳號',
     pwd: '密碼',
     accountPlaceholder: '請輸入帳號',
     pwdPlaceholder: '請輸入密碼',

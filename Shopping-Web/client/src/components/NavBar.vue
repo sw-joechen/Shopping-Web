@@ -99,7 +99,12 @@ export default {
   },
   methods: {
     RouteHandler() {
-      this.$router.push({ name: 'login' });
+      this.$router.push({
+        name: 'login',
+        params: {
+          option: 'register',
+        },
+      });
     },
     async LoginHandler() {
       if (
