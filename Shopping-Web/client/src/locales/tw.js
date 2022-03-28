@@ -13,6 +13,7 @@ export default {
     shoppingCart: '購物車',
     logout: '登出',
     login: '登入',
+    register: '註冊',
   },
   navBar: {
     confirmLogout: '確定要登出嗎',

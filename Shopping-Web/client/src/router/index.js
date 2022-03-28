@@ -9,6 +9,14 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
+    redirect: '/index',
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('../views/IndexView.vue'),
+      },
+    ],
   },
   {
     path: '/login',

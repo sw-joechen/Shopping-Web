@@ -5,7 +5,7 @@
         v-if="getAccount.length"
         class="welcome px-3 flex justify-end items-center"
       >
-        歡迎回來 <span class="text-green1">{{ getAccount }}</span>
+        歡迎回來 &nbsp;<span class="text-green1">{{ getAccount }}</span>
       </div>
       <div v-else class="inputsContainer flex justify-end items-center">
         <!-- 帳號 -->
@@ -48,13 +48,17 @@
         <router-link to="/" class="links">
           {{ $t('common.shoppingCart') }}
         </router-link>
-        <span v-if="getAccount.length">|</span>
-        <div
-          class="logout links cursor-pointer"
-          v-if="getAccount.length"
-          @click="ToggleHandler"
-        >
-          {{ $t('common.logout') }}
+        <div v-if="getAccount.length" class="flex">
+          <span>|</span>
+          <div class="logout links cursor-pointer" @click="ToggleHandler">
+            {{ $t('common.logout') }}
+          </div>
+        </div>
+        <div v-else class="flex">
+          <span>|</span>
+          <div class="register links cursor-pointer" @click="RouteHandler">
+            {{ $t('common.register') }}
+          </div>
         </div>
       </div>
 
@@ -94,6 +98,9 @@ export default {
     },
   },
   methods: {
+    RouteHandler() {
+      this.$router.push({ name: 'login' });
+    },
     async LoginHandler() {
       if (
         !this.account.length ||

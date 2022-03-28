@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <NavBar />
     <router-view />
     <NotificationWrapper />
   </div>
@@ -8,12 +7,10 @@
 
 <script>
 import NotificationWrapper from '@/components/Notification.vue/NotificationWrapper.vue';
-import NavBar from '@/components/NavBar.vue';
 
 export default {
   components: {
     NotificationWrapper,
-    NavBar,
   },
   created() {
     document.title = 'ooxx購物網';
