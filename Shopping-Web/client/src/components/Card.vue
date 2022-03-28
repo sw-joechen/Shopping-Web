@@ -1,10 +1,10 @@
 <template>
   <div class="card rounded overflow-hidden shadow-lg">
     <img class="w-full" :src="product.picture" />
-    <div class="px-6 py-4">
+    <div class="px-5 py-2">
       <div
         :title="product.name"
-        class="name txtEllipsis font-bold text-xl mb-2"
+        class="name txtEllipsis font-bold text-2xl mb-2"
       >
         {{ product.name }}
       </div>
