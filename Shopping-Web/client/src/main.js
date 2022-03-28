@@ -5,6 +5,7 @@ import store from './store';
 import './index.css';
 import VueI18n from 'vue-i18n';
 import tw from './locales/tw';
+import './mockjs/mock';
 
 Vue.use(VueI18n);
 Vue.config.productionTip = false;
