@@ -14,4 +14,7 @@ export default {
     logout: '登出',
     login: '登入',
   },
+  navBar: {
+    confirmLogout: '確定要登出嗎',
+  },
 };
