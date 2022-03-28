@@ -1,20 +1,19 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import HomeView from '../views/HomeView.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView,
-    redirect: '/index',
+    name: 'layout',
+    component: () => import('../views/LayoutView.vue'),
+    redirect: '/home',
     children: [
       {
-        path: 'index',
-        name: 'index',
-        component: () => import('../views/IndexView.vue'),
+        path: 'home',
+        name: 'home',
+        component: () => import('../views/HomeView.vue'),
       },
     ],
   },
