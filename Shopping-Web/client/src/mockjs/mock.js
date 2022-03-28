@@ -28,6 +28,121 @@ const Login = (payload) => {
   return JSON.stringify(result);
 };
 
+const GetProductList = () => {
+  const result = {
+    code: 200,
+    msg: 'success',
+    data: [
+      {
+        id: '1',
+        name: 'a aaaabb b bbaaaaab bbbba aa abbbbbaaaaa bbbbbaaa aabbbbb',
+        amount: 1,
+        createdDate: '2022-03-17T15:43:55.653',
+        description:
+          'xxx xxyy yyyxxxx xy yyyy xxx xxy y yyyxx xx xyyy yyxxx xxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy',
+        enabled: true,
+        picture: 'https://picsum.photos/200',
+        price: 1,
+        type: 't1',
+        updatedDate: '2022-03-17T15:43:55.653',
+      },
+      {
+        id: '2',
+        name: 'test',
+        amount: 1,
+        createdDate: '2022-03-17T15:43:55.653',
+        description: 'desc',
+        enabled: true,
+        picture: 'https://picsum.photos/200',
+        price: 1,
+        type: 't1',
+        updatedDate: '2022-03-17T15:43:55.653',
+      },
+      {
+        amount: 243,
+        createdDate: '2022-03-17T15:43:55.653',
+        description: 'desc2',
+        enabled: false,
+        id: '23',
+        name: 'test2',
+        picture: 'https://picsum.photos/200',
+        price: 1,
+        type: 'type2',
+        updatedDate: '2022-03-17T15:43:55.653',
+      },
+      {
+        id: '76',
+        name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
+        amount: 1,
+        createdDate: '2022-03-17T15:43:55.653',
+        description:
+          'xxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy',
+        enabled: true,
+        picture: 'https://picsum.photos/200',
+        price: 1,
+        type: 't1',
+        updatedDate: '2022-03-17T15:43:55.653',
+      },
+
+      {
+        id: '1',
+        name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
+        amount: 1,
+        createdDate: '2022-03-17T15:43:55.653',
+        description:
+          'xxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy',
+        enabled: true,
+        picture: 'https://picsum.photos/200',
+        price: 1,
+        type: 't1',
+        updatedDate: '2022-03-17T15:43:55.653',
+      },
+      {
+        id: '2',
+        name: 'test',
+        amount: 1,
+        createdDate: '2022-03-17T15:43:55.653',
+        description: 'desc',
+        enabled: true,
+        picture: 'https://picsum.photos/200',
+        price: 1,
+        type: 't1',
+        updatedDate: '2022-03-17T15:43:55.653',
+      },
+      {
+        amount: 243,
+        createdDate: '2022-03-17T15:43:55.653',
+        description: 'desc2',
+        enabled: false,
+        id: '23',
+        name: 'test2',
+        picture: 'https://picsum.photos/200',
+        price: 1,
+        type: 'type2',
+        updatedDate: '2022-03-17T15:43:55.653',
+      },
+      {
+        id: '76',
+        name: 'aaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbbaaaaabbbbb',
+        amount: 1,
+        createdDate: '2022-03-17T15:43:55.653',
+        description:
+          'xxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy',
+        enabled: true,
+        picture: 'https://picsum.photos/200',
+        price: 1,
+        type: 't1',
+        updatedDate: '2022-03-17T15:43:55.653',
+      },
+    ],
+  };
+  return JSON.stringify(result);
+};
+
 if (process.env.NODE_ENV === 'development') {
+  // member
   Mock.mock('/api/member/login', Login);
+
+  // product
+  Mock.mock('/api/product/getProductsList', GetProductList);
 }

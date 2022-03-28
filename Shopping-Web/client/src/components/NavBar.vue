@@ -48,7 +48,7 @@
         <router-link to="/" class="links">
           {{ $t('common.shoppingCart') }}
         </router-link>
-        |
+        <span v-if="getAccount.length">|</span>
         <div
           class="logout links cursor-pointer"
           v-if="getAccount.length"
