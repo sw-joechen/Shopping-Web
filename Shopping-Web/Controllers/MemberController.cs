@@ -311,6 +311,7 @@ namespace Shopping_Web.Controllers
             }
             catch (Exception ex)
             {
+                // test
                 Debug.WriteLine($"ex: {ex}");
                 result.Set(101, "網路錯誤");
             }
