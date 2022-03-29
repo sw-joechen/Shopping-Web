@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-
+import store from '@/store/index';
 Vue.use(VueRouter);
 
 const routes = [
@@ -20,6 +20,13 @@ const routes = [
   {
     path: '/login',
     name: 'login',
+    beforeEnter: (to, from, next) => {
+      if (store.state.user.isLoggedIn) {
+        next({ name: 'home' });
+      } else {
+        next();
+      }
+    },
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.

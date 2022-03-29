@@ -4,7 +4,7 @@ import user from './modules/user';
 import eventBus from './modules/eventBus';
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {},
   getters: {},
   mutations: {},
@@ -14,3 +14,5 @@ export default new Vuex.Store({
     eventBus,
   },
 });
+
+export default store;
