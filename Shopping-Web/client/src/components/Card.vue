@@ -2,11 +2,12 @@
   <div class="card rounded overflow-hidden shadow-lg">
     <div class="imgContainer relative w-full pt-[100%]">
       <img
-        class="w-full h-full absolute top-0 left-0 object-contain align-bottom"
-        :src="redirectImg(product.picture)"
-        loading="lazy"
+        :class="`img${product.id}`"
+        class="img w-full h-full absolute top-0 left-0 object-contain align-bottom"
+        :data-temp="redirectImg(product.picture)"
       />
     </div>
+    <!-- <div class="ob h-[1px] w-full"></div> -->
     <div class="px-5 py-2">
       <div
         :title="product.name"
@@ -36,6 +37,25 @@ export default {
       required: true,
       type: Object,
     },
+  },
+  data: () => {
+    return {
+      observer: null,
+      src: '',
+    };
+  },
+  mounted() {
+    this.observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        //  只在目標元素進入 viewport 時執行這裡的工作
+        if (entry.isIntersecting) {
+          entry.target.setAttribute('src', entry.target.dataset.temp);
+          // 完成後，停止觀察當前目標
+          observer.unobserve(entry.target);
+        }
+      });
+    });
+    this.observer.observe(document.querySelector(`.img${this.product.id}`));
   },
   methods: {
     redirectImg(path) {
