@@ -1,6 +1,12 @@
 <template>
   <div class="card rounded overflow-hidden shadow-lg">
-    <img class="w-full" :src="product.picture" />
+    <div class="imgContainer relative w-full pt-[100%]">
+      <img
+        class="w-full h-full absolute top-0 left-0 object-contain align-bottom"
+        :src="redirectImg(product.picture)"
+        loading="lazy"
+      />
+    </div>
     <div class="px-5 py-2">
       <div
         :title="product.name"
@@ -29,6 +35,12 @@ export default {
     product: {
       required: true,
       type: Object,
+    },
+  },
+  methods: {
+    redirectImg(path) {
+      if (process.env.NODE_ENV === 'development') return path;
+      return `http://localhost:15770${path}`;
     },
   },
 };
