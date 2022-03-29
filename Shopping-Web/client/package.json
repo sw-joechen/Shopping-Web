@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build && npm run after-build",
+    "lint": "vue-cli-service lint",
+    "dev": "npm run serve",
+    "after-build": "npm run rm-cssDir && npm run rm-jsDir && mv -f dist/* ../",
+    "rm-cssDir": "rm -r ../css",
+    "rm-jsDir": "rm -r ../js"
   },
   "dependencies": {
     "axios": "^0.26.1",
