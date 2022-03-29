@@ -82,7 +82,7 @@ namespace Shopping_Web.Controllers
                                     name = r["f_name"].ToString(),
                                     description = r["f_description"].ToString(),
                                     price = Convert.ToInt16(r["f_price"]),
-                                    picture = $"{httpRequest.Url.Scheme}://{httpRequest.Url.Authority}/Uploads{r["f_picture"].ToString()}",
+                                    picture = $"/Uploads{r["f_picture"]}",
                                     amount = Convert.ToInt16(r["f_amount"]),
                                     type = r["f_type"].ToString(),
                                     enabled = Convert.ToBoolean(Convert.ToInt16(r["f_enabled"])),
