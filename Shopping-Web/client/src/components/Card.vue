@@ -1,6 +1,10 @@
 <template>
   <div class="card rounded overflow-hidden shadow-lg">
-    <div class="imgContainer relative w-full pt-[100%] bg-gray-400">
+    <div class="imgContainer relative w-full pt-[100%] bg-white">
+      <img
+        src="@/assets/spin_animated.svg"
+        class="w-20 h-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      />
       <img
         :class="`img${product.id}`"
         class="img w-full h-full absolute top-0 left-0 object-contain align-bottom"
@@ -47,10 +51,10 @@ export default {
   mounted() {
     this.observer = new IntersectionObserver((entries, observer) => {
       entries.forEach((entry) => {
-        //  只在目標元素進入 viewport 時執行這裡的工作
+        //  目標dom進入viewport
         if (entry.isIntersecting) {
           entry.target.setAttribute('src', entry.target.dataset.temp);
-          // 完成後，停止觀察當前目標
+          // 完成後，停止觀察dom
           observer.unobserve(entry.target);
         }
       });
