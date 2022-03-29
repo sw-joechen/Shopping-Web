@@ -9,6 +9,7 @@
 import NotificationWrapper from '@/components/Notification.vue/NotificationWrapper.vue';
 
 export default {
+  name: 'app',
   components: {
     NotificationWrapper,
   },

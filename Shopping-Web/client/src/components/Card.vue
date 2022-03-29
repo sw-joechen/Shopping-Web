@@ -1,6 +1,6 @@
 <template>
   <div class="card rounded overflow-hidden shadow-lg">
-    <div class="imgContainer relative w-full pt-[100%]">
+    <div class="imgContainer relative w-full pt-[100%] bg-gray-400">
       <img
         :class="`img${product.id}`"
         class="img w-full h-full absolute top-0 left-0 object-contain align-bottom"

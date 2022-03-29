@@ -12,6 +12,7 @@ module.exports = {
         black1: 'rgba(0, 0, 0, .5)',
         black2: '#444950',
         black3: '#2c3e50',
+        black4: '#f5f5f5',
         gray1: 'rgba(0,0,0,0.26)',
       },
     },
