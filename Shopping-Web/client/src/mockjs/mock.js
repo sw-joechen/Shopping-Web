@@ -1,5 +1,13 @@
 import Mock from 'mockjs';
 
+const Register = () => {
+  const result = {
+    code: 200,
+    msg: 'success',
+  };
+  return JSON.stringify(result);
+};
+
 const Login = (payload) => {
   let tempData = {};
   if (payload.body) {
@@ -142,6 +150,8 @@ const GetProductList = () => {
 if (process.env.NODE_ENV === 'development') {
   // member
   Mock.mock('/api/member/login', Login);
+
+  Mock.mock('/api/member/registerMember', Register);
 
   // product
   Mock.mock('/api/product/getProductsList', GetProductList);
