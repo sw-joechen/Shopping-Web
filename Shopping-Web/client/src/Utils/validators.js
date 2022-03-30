@@ -29,3 +29,17 @@ const numberRegex = new RegExp(/^\d+$/);
 export const IsPureNumber = (number) => {
   return numberRegex.test(number);
 };
+
+// 電話號碼
+const phoneRegex = new RegExp(/^09[0-9]{8}$/);
+
+export const IsPhoneNumber = (phoneNumber) => {
+  return phoneRegex.test(phoneNumber);
+};
+
+// email
+const emailRegex = new RegExp(/^([\w.-]+)@([\w-]+)((.(\w){2,3})+)$/);
+
+export const IsEmailValid = (email) => {
+  return emailRegex.test(email);
+};
