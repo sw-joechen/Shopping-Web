@@ -61,14 +61,6 @@
           </div>
         </div>
       </div>
-
-      <ConfirmDialog
-        v-if="isShowLogOutDialog"
-        :is-show-dialog="isShowLogOutDialog"
-        :title="$t('navBar.confirmLogout')"
-        @toggle="ToggleHandler"
-        @submit="LogoutHandler"
-      />
     </div>
   </div>
 </template>
@@ -77,13 +69,11 @@
 import BtnPrimary from '../components/BtnPrimary.vue';
 import { Login } from '../APIs/member';
 import errorList from '../ErrorCodeList';
-import ConfirmDialog from '@/components/Dialogs/DialogView.vue';
 import { IsContaineSpecialCharaters } from '../Utils/validators';
 export default {
   name: 'navBar',
   components: {
     BtnPrimary,
-    ConfirmDialog,
   },
   data: () => {
     return {
@@ -142,7 +132,7 @@ export default {
       }
     },
     ToggleHandler() {
-      this.isShowLogOutDialog = !this.isShowLogOutDialog;
+      this.$emit('toggle');
     },
     LogoutHandler() {
       this.ToggleHandler();
