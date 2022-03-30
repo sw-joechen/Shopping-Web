@@ -97,15 +97,21 @@ export default {
       });
     },
     async LoginHandler() {
+      if (!this.account.length || !this.pwd.length) {
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: '請輸入帳號密碼',
+        });
+        return;
+      }
+
       if (
-        !this.account.length ||
-        !this.pwd.length ||
         IsContaineSpecialCharaters(this.account) ||
         IsContaineSpecialCharaters(this.pwd)
       ) {
         this.$store.commit('eventBus/Push', {
           type: 'error',
-          content: '請輸入帳號密碼',
+          content: '帳號密碼不允許特殊符號',
         });
         return;
       }
