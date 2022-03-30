@@ -7,9 +7,10 @@
     "build": "vue-cli-service build && npm run after-build",
     "lint": "vue-cli-service lint",
     "dev": "npm run serve",
-    "after-build": "npm run rm-cssDir && npm run rm-jsDir && mv -f dist/* ../",
+    "after-build": "npm run rm-cssDir && npm run rm-jsDir && npm run rm-imgDir && mv -f dist/* ../",
     "rm-cssDir": "rm -r ../css",
-    "rm-jsDir": "rm -r ../js"
+    "rm-jsDir": "rm -r ../js",
+    "rm-imgDir": "rm -r ../img"
   },
   "dependencies": {
     "axios": "^0.26.1",
