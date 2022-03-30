@@ -6,6 +6,7 @@ Debug/
 Release/
 js/
 css/
+img/
 *.suo
 *.user
 _ReSharper.*
