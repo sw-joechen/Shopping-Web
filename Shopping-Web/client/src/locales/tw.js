@@ -22,4 +22,11 @@ export default {
   navBar: {
     confirmLogout: '確定要登出嗎',
   },
+  loginAndRegister: {
+    accountWarning: '帳號需以英文開頭, 僅限英數字, 介於6~20字元',
+    pwdWarning: '密碼須包含大小寫字母及數字,超過6字元',
+    addressWarning: '請填入地址',
+    phoneWarning: '電話格式錯誤',
+    emailWarning: '信箱格式錯誤',
+  },
 };

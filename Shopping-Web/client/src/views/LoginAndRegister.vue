@@ -33,7 +33,7 @@
             </div>
 
             <!-- 帳號 -->
-            <div class="mb-[18px]">
+            <div class="mb-[18px] relative">
               <input
                 :class="{ '!border-red-600': isAccountWarning }"
                 v-model="registerData.account"
@@ -43,10 +43,16 @@
                 @keyup.enter="SubmitHandler"
                 @focus="isAccountWarning = false"
               />
+              <p
+                v-show="isAccountWarning"
+                class="text-red-500 text-xs italic absolute -bottom-4"
+              >
+                {{ $t('loginAndRegister.accountWarning') }}
+              </p>
             </div>
 
             <!-- 密碼 -->
-            <div class="mb-[18px]">
+            <div class="mb-[18px] relative">
               <input
                 :class="{ '!border-red-600': isPwdWarning }"
                 v-model="registerData.pwd"
@@ -56,10 +62,16 @@
                 @keyup.enter="SubmitHandler"
                 @focus="isPwdWarning = false"
               />
+              <p
+                v-show="isPwdWarning"
+                class="text-red-500 text-xs italic absolute -bottom-4"
+              >
+                {{ $t('loginAndRegister.pwdWarning') }}
+              </p>
             </div>
 
             <!-- 地址 -->
-            <div class="mb-[18px]" v-if="option === 'register'">
+            <div class="mb-[18px] relative" v-if="option === 'register'">
               <input
                 :class="{ '!border-red-600': isAddressWarning }"
                 v-model="registerData.address"
@@ -69,10 +81,16 @@
                 @keyup.enter="SubmitHandler"
                 @focus="isAddressWarning = false"
               />
+              <p
+                v-show="isAddressWarning"
+                class="text-red-500 text-xs italic absolute -bottom-4"
+              >
+                {{ $t('loginAndRegister.addressWarning') }}
+              </p>
             </div>
 
             <!-- 電話 -->
-            <div class="mb-[18px]" v-if="option === 'register'">
+            <div class="mb-[18px] relative" v-if="option === 'register'">
               <input
                 :class="{ '!border-red-600': isPhoneWarning }"
                 v-model="registerData.phone"
@@ -83,6 +101,12 @@
                 @keypress="keypressHandler"
                 @focus="isPhoneWarning = false"
               />
+              <p
+                v-show="isPhoneWarning"
+                class="text-red-500 text-xs italic absolute -bottom-4"
+              >
+                {{ $t('loginAndRegister.phoneWarning') }}
+              </p>
             </div>
 
             <!-- 性別 -->
@@ -130,7 +154,7 @@
             </div>
 
             <!-- email -->
-            <div class="mb-[18px]" v-if="option === 'register'">
+            <div class="mb-[18px] relative" v-if="option === 'register'">
               <input
                 :class="{ '!border-red-600': isEmailWarning }"
                 v-model="registerData.email"
@@ -140,6 +164,12 @@
                 @keyup.enter="SubmitHandler"
                 @focus="isEmailWarning = false"
               />
+              <p
+                v-show="isEmailWarning"
+                class="text-red-500 text-xs italic absolute -bottom-4"
+              >
+                {{ $t('loginAndRegister.emailWarning') }}
+              </p>
             </div>
             <div class="flex items-center justify-center">
               <BtnLogin
@@ -296,12 +326,12 @@ export default {
       }
     },
     async LoginHandler() {
-      const isAccountValid = IsContaineSpecialCharaters(
+      const isAccountValid = !IsContaineSpecialCharaters(
         this.registerData.account
       );
       if (!isAccountValid) this.isAccountWarning = true;
 
-      const isPwdValid = IsContaineSpecialCharaters(this.registerData.pwd);
+      const isPwdValid = !IsContaineSpecialCharaters(this.registerData.pwd);
       if (!isPwdValid) this.isPwdWarning = true;
 
       if (isAccountValid && isPwdValid) {
