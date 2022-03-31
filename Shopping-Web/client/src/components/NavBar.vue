@@ -1,5 +1,16 @@
 <template>
-  <div class="navBar">
+  <div class="navBar flex justify-between w-[1400px] mx-auto">
+    <div class="wrapper flex items-center">
+      <div class="imgContainer mr-1 cursor-pointer" @click="RouteHomeHandler">
+        <img class="w-14" src="@/assets/logo.png" alt="阿進購物" />
+      </div>
+      <div
+        class="title text-4xl text-green1 mr-3 cursor-pointer"
+        @click="RouteHomeHandler"
+      >
+        阿進購物
+      </div>
+    </div>
     <div class="wrapper">
       <div
         v-if="getAccount.length"
@@ -41,11 +52,11 @@
         />
       </div>
       <div class="linksContainer flex justify-end items-center">
-        <router-link to="/" class="links">
+        <router-link :to="{ name: 'info' }" class="links">
           {{ $t('common.personalInfo') }}
         </router-link>
         |
-        <router-link to="/" class="links">
+        <router-link :to="{ name: 'shoppingCart' }" class="links">
           {{ $t('common.shoppingCart') }}
         </router-link>
         <div v-if="getAccount.length" class="flex">
@@ -88,6 +99,9 @@ export default {
     },
   },
   methods: {
+    RouteHomeHandler() {
+      this.$router.push({ name: 'home' }).catch(() => {});
+    },
     RouteHandler() {
       this.$router.push({
         name: 'login',

@@ -1,7 +1,7 @@
 <template>
   <div class="layoutView p-2 bg-black4">
     <NavBar @toggle="ToggleHandler" />
-    <router-view />
+    <router-view class="routerView" />
 
     <ConfirmDialog
       v-if="isShowLogOutDialog"
@@ -39,3 +39,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.layoutView {
+  .routerView {
+    // 扣掉(navBar + layoutView padding)
+    min-height: calc(100vh - 106px);
+  }
+}
+</style>
