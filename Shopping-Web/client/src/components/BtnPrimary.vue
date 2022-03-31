@@ -1,9 +1,9 @@
 <template>
-  <div class="btnPrimary" :class="width">
+  <div class="btnPrimary">
     <button
       @click="ClickHandler"
-      :class="width"
-      class="bg-green1 hover:bg-green2 focus:ring-2 ring-green4 text-white font-bold py-2 px-4 rounded"
+      :class="getTheme"
+      class="text-white font-bold py-2 px-4 rounded"
     >
       {{ label }}
     </button>
@@ -20,6 +20,28 @@ export default {
     width: {
       required: false,
       default: '',
+    },
+    theme: {
+      required: false,
+      type: String,
+    },
+  },
+  computed: {
+    getTheme() {
+      switch (this.theme) {
+        case 'red': {
+          return 'bg-red-500 hover:bg-red-700 focus:ring-4 focus:ring-red-300';
+        }
+        case 'green': {
+          return 'bg-green-500 hover:bg-green-700 focus:ring-4 focus:ring-green-300';
+        }
+        case 'white': {
+          return 'bg-white hover:bg-gray-100 text-gray-800  shadow font-semibold';
+        }
+        default: {
+          return 'bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300';
+        }
+      }
     },
   },
   methods: {

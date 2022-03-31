@@ -36,6 +36,35 @@ const Login = (payload) => {
   return JSON.stringify(result);
 };
 
+const GetMemberPersonalInfo = (payload) => {
+  let tempData = [];
+  if (payload.body) {
+    let account = '';
+    for (var pair of payload.body.entries()) {
+      if (pair[0] === 'account') account = pair[1];
+    }
+    tempData.push({
+      id: 1,
+      account,
+      pwd: '!@!^*&@#$)(FDdwq321',
+      address: '台中市blabla',
+      phone: '0987654321',
+      gender: 1,
+      email: 'test@test.com',
+      enabled: 1,
+      balance: 1.23,
+      createdDate: '2022-03-07T15:41:06.280',
+      updatedDate: '2022-03-07T15:41:06.280',
+    });
+  }
+  const result = {
+    code: 200,
+    msg: 'success',
+    data: tempData,
+  };
+  return JSON.stringify(result);
+};
+
 const GetProductList = () => {
   const tempData = [];
 
@@ -68,6 +97,8 @@ if (process.env.NODE_ENV === 'development') {
   Mock.mock('/api/member/login', Login);
 
   Mock.mock('/api/member/registerMember', Register);
+
+  Mock.mock('/api/member/getMemberPersonalInfo', GetMemberPersonalInfo);
 
   // product
   Mock.mock('/api/product/getProductsList', GetProductList);
