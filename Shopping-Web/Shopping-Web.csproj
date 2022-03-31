@@ -85,6 +85,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\Member.cs" />
     <Compile Include="Class\Product.cs" />
     <Compile Include="Class\Result.cs" />
     <Compile Include="Controllers\MemberController.cs" />
