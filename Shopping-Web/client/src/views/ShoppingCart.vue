@@ -97,7 +97,7 @@ export default {
       }
     },
     IncrementHandler(item) {
-      item.amount++;
+      item.amount++; // testgit
     },
     demoHandler() {
       this.$store.commit('shoppingCart/AddProduct', {
