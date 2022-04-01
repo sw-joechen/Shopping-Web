@@ -25,7 +25,7 @@
         {{ product.description }}
       </div>
       <div class="btnsWrapper mt-3 flex justify-between">
-        <BtnPrimary label="結帳" @submit="CheckoutHandler" theme="green" />
+        <BtnPrimary label="結帳" @submit="CheckoutHandler" theme="red" />
         <BtnPrimary
           theme="green"
           class="whitespace-nowrap"
