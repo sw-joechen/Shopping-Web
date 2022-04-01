@@ -76,14 +76,15 @@
           {{ $t('loginAndRegister.emailWarning') }}
         </p>
       </div>
-      <div class="btnsWrapper flex justify-center relative">
-        <BtnPrimary label="確認修改" @submit="SubmitHandler" class="mr-2" />
-        <BtnPrimary label="取消" theme="white" class="mr-2" />
+      <div class="btnsWrapper flex justify-end relative">
         <BtnPrimary
+          theme="red"
           label="修改密碼"
           @submit="ToggleEditDialogHandler"
-          class="absolute right-0"
+          class="absolute left-0"
         />
+        <BtnPrimary label="取消" theme="white" class="mr-3" />
+        <BtnPrimary label="確認修改" @submit="SubmitHandler" theme="green" />
       </div>
     </div>
     <FormDialog

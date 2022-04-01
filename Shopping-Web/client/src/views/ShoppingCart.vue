@@ -75,6 +75,7 @@
         label="結帳"
         @submit="CheckoutHandler"
         :disabled="!productList.length"
+        theme="red"
       />
     </div>
   </div>
