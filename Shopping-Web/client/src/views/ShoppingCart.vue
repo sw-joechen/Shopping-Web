@@ -5,6 +5,7 @@
         <!-- checkbox -->
         <div class="checkbox flex items-center p-2">
           <input
+            class="w-5 h-5"
             type="checkbox"
             id="checkbox"
             v-model="item.checked"
@@ -12,21 +13,24 @@
           />
         </div>
 
+        <div class="imgContainer flex justify-center p-2">
+          <img class="w-16 h-16" :src="redirectImg(item.picture)" />
+        </div>
+
         <!-- product -->
-        <div class="product flex items-center p-2">
-          <div class="imgContainer flex justify-center mr-4">
-            <img class="w-16" :src="item.picture" />
-          </div>
+        <div class="product flex items-center p-2 max-w-[820px]">
           <div
             :title="item.description"
-            class="break-all flex-grow whitespace-nowrap overflow-hidden text-ellipsis"
+            class="break-all flex-grow whitespace-nowrap overflow-hidden text-ellipsis font-bold text-lg"
           >
             {{ item.description }}
           </div>
         </div>
 
         <!-- price -->
-        <div class="price flex items-center p-2">$ {{ item.price }}</div>
+        <div class="price flex items-center p-2 text-lg">
+          $ {{ item.price }}
+        </div>
 
         <!-- amount -->
         <div class="amount flex items-center p-2 w-36">
@@ -54,7 +58,7 @@
           </div>
         </div>
 
-        <div class="totalPrice flex items-center p-2">
+        <div class="totalPrice flex items-center p-2 text-lg">
           $ {{ item.price * item.amount }}
         </div>
         <!-- <div class="delete"></div> -->
@@ -186,6 +190,10 @@ export default {
     IncrementHandler(item) {
       item.amount++;
       this.$store.commit('shoppingCart/EditProduct', item);
+    },
+    redirectImg(path) {
+      if (process.env.NODE_ENV === 'development') return path;
+      return `http://localhost:15770${path}`;
     },
   },
 };
