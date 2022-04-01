@@ -1,5 +1,5 @@
 <template>
-  <div class="card rounded overflow-hidden shadow-lg">
+  <div class="card rounded overflow-hidden shadow-lg flex flex-col">
     <div class="imgContainer relative w-full pt-[100%] bg-white">
       <img
         src="@/assets/spin_animated.svg"
@@ -11,8 +11,7 @@
         :data-temp="redirectImg(product.picture)"
       />
     </div>
-    <!-- <div class="ob h-[1px] w-full"></div> -->
-    <div class="px-5 py-2">
+    <div class="px-5 py-2 flex-grow flex flex-col">
       <div
         :title="product.name"
         class="name txtEllipsis font-bold text-2xl mb-2"
@@ -21,11 +20,11 @@
       </div>
       <div
         :title="product.description"
-        class="desc txtEllipsis text-gray-700 text-base"
+        class="desc txtEllipsis text-gray-700 text-base flex-grow"
       >
         {{ product.description }}
       </div>
-      <div class="btnsWrapper grid grid-cols-2 mt-3">
+      <div class="btnsWrapper mt-3 flex justify-between">
         <BtnPrimary label="結帳" @submit="CheckoutHandler" />
         <BtnPrimary
           class="whitespace-nowrap"
