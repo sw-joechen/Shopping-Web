@@ -18,7 +18,7 @@
         </div>
 
         <!-- product -->
-        <div class="product flex items-center p-2 max-w-[820px]">
+        <div class="product flex items-center p-2 max-w-[820px] flex-grow">
           <div
             :title="item.description"
             class="break-all flex-grow whitespace-nowrap overflow-hidden text-ellipsis font-bold text-lg"
