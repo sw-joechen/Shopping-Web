@@ -2,8 +2,9 @@
   <div class="btnPrimary">
     <button
       @click="ClickHandler"
-      :class="getTheme"
+      :class="[getTheme, { 'cursor-not-allowed opacity-80': disabled }]"
       class="text-white font-bold py-2 px-4 rounded"
+      :disabled="disabled"
     >
       {{ label }}
     </button>
@@ -24,6 +25,10 @@ export default {
     theme: {
       required: false,
       type: String,
+    },
+    disabled: {
+      required: false,
+      type: Boolean,
     },
   },
   computed: {

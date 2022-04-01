@@ -79,7 +79,7 @@ const GetProductList = () => {
         'xxx xxyy yyyxxxx xy yyyy xxx xxy y yyyxx xx xyyy yyxxx xxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyyxxxxxyyyyy',
       enabled: true,
       picture: `https://picsum.photos/200/200?image=${start + i}`,
-      price: 87,
+      price: 10,
       type: 't1',
       updatedDate: '2022-03-17T15:43:55.653',
     });

@@ -17,6 +17,7 @@ const mutations = {
     );
     if (targetIndex !== -1) {
       state.shoppingCart.splice(targetIndex, 1, payload);
+      this.commit('shoppingCart/SetLocalStorage');
     }
   },
   DelProduct(state, productID) {
@@ -25,11 +26,11 @@ const mutations = {
     );
     if (targetIndex !== -1) {
       state.shoppingCart.splice(targetIndex, 1);
+      this.commit('shoppingCart/SetLocalStorage');
     }
   },
   InitShoppingCart(state) {
     const res = localStorage.getItem('client_shopping_cart');
-    console.log(res);
     if (res) {
       state.shoppingCart = JSON.parse(res);
     }

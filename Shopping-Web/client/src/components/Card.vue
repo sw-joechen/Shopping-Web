@@ -25,13 +25,25 @@
       >
         {{ product.description }}
       </div>
+      <div class="btnsWrapper grid grid-cols-2 mt-3">
+        <BtnPrimary label="結帳" @submit="CheckoutHandler" />
+        <BtnPrimary
+          class="whitespace-nowrap"
+          label="加入購物車"
+          @submit="AddToCartHandler"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import BtnPrimary from '@/components/BtnPrimary.vue';
 export default {
   name: 'cardView',
+  components: {
+    BtnPrimary,
+  },
   props: {
     // id: number,
     // name: string,
@@ -62,6 +74,16 @@ export default {
     this.observer.observe(document.querySelector(`.img${this.product.id}`));
   },
   methods: {
+    AddToCartHandler() {
+      this.$store.commit('shoppingCart/AddProduct', {
+        ...this.product,
+        checked: false,
+      });
+    },
+    CheckoutHandler() {
+      this.AddToCartHandler();
+      this.$router.push({ name: 'shoppingCart' });
+    },
     redirectImg(path) {
       if (process.env.NODE_ENV === 'development') return path;
       return `http://localhost:15770${path}`;
