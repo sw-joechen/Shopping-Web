@@ -20,10 +20,10 @@
         <!-- product -->
         <div class="product flex items-center p-2 max-w-[820px] flex-grow">
           <div
-            :title="item.description"
-            class="break-all flex-grow whitespace-nowrap overflow-hidden text-ellipsis font-bold text-lg"
+            :title="item.name"
+            class="text-left break-all flex-grow whitespace-nowrap overflow-hidden text-ellipsis font-bold text-lg"
           >
-            {{ item.description }}
+            {{ item.name }}
           </div>
         </div>
 
@@ -89,6 +89,7 @@ export default {
     BtnPrimary,
   },
   watch: {
+    // TODO: 看能不能做成computed
     productList: {
       deep: true,
       handler(val) {

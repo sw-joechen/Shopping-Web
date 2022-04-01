@@ -1,6 +1,7 @@
 <template>
   <div class="card rounded overflow-hidden shadow-lg flex flex-col">
     <div class="imgContainer relative w-full pt-[100%] bg-white">
+      <!--  TODO: svg可以放在background -->
       <img
         src="@/assets/spin_animated.svg"
         class="w-20 h-20 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
