@@ -18,13 +18,13 @@
       <div class="content px-5 py-2 flex-grow flex flex-col">
         <div
           :title="product.name"
-          class="name txtEllipsis font-bold text-2xl mb-2"
+          class="name txtEllipsis font-bold text-2xl mb-2 text-left"
         >
           {{ product.name }}
         </div>
         <div
           :title="product.description"
-          class="desc txtEllipsis text-gray-700 text-base flex-grow"
+          class="desc txtEllipsis text-gray-700 text-base flex-grow text-left"
         >
           {{ product.description }}
         </div>
