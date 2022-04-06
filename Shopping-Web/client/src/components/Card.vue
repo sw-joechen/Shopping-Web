@@ -80,6 +80,10 @@ export default {
         ...this.product,
         checked: false,
       });
+      this.$store.commit('eventBus/Push', {
+        type: 'success',
+        content: '加入購物車成功',
+      });
     },
     CheckoutHandler() {
       this.AddToCartHandler();
