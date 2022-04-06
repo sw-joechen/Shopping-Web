@@ -8,8 +8,9 @@
         </label>
         <input
           v-model="queryInfos.account"
-          class="pointer-events-none ml-20 w-full shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-green1 focus:ring-1 focus:border-green1"
+          class="pointer-events-none ml-20 w-full shadow border rounded py-2 px-3 text-gray-700 leading-tight"
           type="text"
+          disabled
           readonly
         />
       </div>
