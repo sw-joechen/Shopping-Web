@@ -142,7 +142,7 @@ namespace Shopping_Web.Controllers
             var httpRequest = HttpContext.Current.Request;
 
             if (httpRequest.Params["account"] == null || httpRequest.Params["address"] == null || httpRequest.Params["phone"] == null || 
-                httpRequest.Params["gender"] == null || httpRequest.Params["email"] == null || httpRequest.Params["enabled"] == null)
+                httpRequest.Params["gender"] == null || httpRequest.Params["email"] == null)
             {
                 result.Set(100, "缺少參數");
                 return result.Stringify();
@@ -155,14 +155,12 @@ namespace Shopping_Web.Controllers
                 string phone = httpRequest.Params["phone"];
                 int gender = Convert.ToInt32(httpRequest.Params["gender"]);
                 string email = httpRequest.Params["email"];
-                int enabled = Convert.ToInt32(Convert.ToBoolean(httpRequest.Params["enabled"]));
 
                 Debug.WriteLine($"account=> {account}");
                 Debug.WriteLine($"address=> {address}");
                 Debug.WriteLine($"phone=> {phone}");
                 Debug.WriteLine($"gender=> {gender}");
                 Debug.WriteLine($"email=> {email}");
-                Debug.WriteLine($"enabled=> {enabled}");
 
                 AccountValidator accValidator = new AccountValidator();
                 PwdValidator pwdValidator = new PwdValidator();
@@ -203,7 +201,6 @@ namespace Shopping_Web.Controllers
                         cmd.Parameters.AddWithValue("@phone", phone);
                         cmd.Parameters.AddWithValue("@gender", gender);
                         cmd.Parameters.AddWithValue("@email", email);
-                        cmd.Parameters.AddWithValue("@enabled", enabled);
                         SqlDataReader r = cmd.ExecuteReader();
                         if (r.Read())
                         {

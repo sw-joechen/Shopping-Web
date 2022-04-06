@@ -306,21 +306,26 @@ export default {
         fd.append('phone', this.queryInfos.phone);
         fd.append('gender', this.queryInfos.gender);
         fd.append('email', this.queryInfos.email);
-        fd.append('enabled', this.queryInfos.enabled);
 
-        const res = await UpdateMember(fd);
-        if (res.code === 200) {
-          this.$store.commit('eventBus/Push', {
-            type: 'success',
-            content: '修改成功',
-          });
-        } else {
+        try {
+          const res = await UpdateMember(fd);
+          if (res.code === 200) {
+            this.$store.commit('eventBus/Push', {
+              type: 'success',
+              content: '修改成功',
+            });
+          } else {
+            this.$store.commit('eventBus/Push', {
+              type: 'error',
+              content: errorList[res.code],
+            });
+          }
+        } catch (e) {
           this.$store.commit('eventBus/Push', {
             type: 'error',
-            content: errorList[res.code],
+            content: errorList[101],
           });
         }
-        console.log('res=> ', res);
       }
     },
 
