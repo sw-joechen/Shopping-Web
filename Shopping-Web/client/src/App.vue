@@ -14,7 +14,7 @@ export default {
     NotificationWrapper,
   },
   created() {
-    document.title = 'ooxx購物網';
+    document.title = '阿進購物';
   },
 };
 </script>
