@@ -23,8 +23,10 @@ export default {
   },
   async created() {
     const res = await GetProductList();
-    if (res.code === 200) {
-      this.productList = res.data;
+    if (res.code === 200 && res.data.length) {
+      res.data.forEach((product) => {
+        if (product.enabled) this.productList.push(product);
+      });
     } else {
       this.$store.commit('eventBus/Push', {
         type: 'error',

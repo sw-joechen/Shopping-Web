@@ -96,7 +96,6 @@ export default {
     AddToCartHandler() {
       this.$store.commit('shoppingCart/AddProduct', {
         ...this.product,
-        checked: false,
       });
       this.$store.commit('eventBus/Push', {
         type: 'success',

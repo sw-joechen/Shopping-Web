@@ -1,14 +1,76 @@
+import { GetProductList } from '@/APIs/product';
+
 const state = () => ({
+  // {
+  // id: number
+  // name: string
+  // amount: number
+  // description: string
+  // enabled: boolean,
+  // picture: string
+  // price: number
+  // type: string
+  // createdDate: string
+  // updatedDate:string
+  // cartQuantity:number
+  // checked:boolean
+  // }
   shoppingCart: [],
 });
 
 const getters = {};
 
-const actions = {};
+const actions = {
+  async InitShoppingCart(context) {
+    let lsList = [];
+    // 從localStorage取出暫存清單
+    if (localStorage.getItem('client_shopping_cart'))
+      lsList = JSON.parse(localStorage.getItem('client_shopping_cart'));
+
+    // TODO: 應該要改呼叫批次搜尋id的接口
+    let productList = [];
+    const res = await GetProductList();
+    if (res.code === 200) {
+      productList = res.data;
+    }
+
+    // 初始化購物車
+    context.state.shoppingCart.splice(0, context.state.shoppingCart.length);
+    lsList.forEach((cartItem) => {
+      return productList.some((product) => {
+        if (cartItem.id === product.id) {
+          context.state.shoppingCart.push({
+            ...product,
+            cartQuantity: cartItem.cartQuantity,
+            checked: false,
+          });
+          return true;
+        }
+        // TODO: 找不到匹配的商品要從購物車中移除
+      });
+    });
+  },
+};
 
 const mutations = {
   AddProduct(state, payload) {
-    state.shoppingCart.push(payload);
+    // 先確認有沒有重複的商品, 有的話數量+1
+    const idx = state.shoppingCart.findIndex((item) => item.id === payload.id);
+    if (idx !== -1) {
+      const cartQuantity = state.shoppingCart[idx].cartQuantity;
+      state.shoppingCart.splice(idx, 1, {
+        ...payload,
+        cartQuantity: cartQuantity + 1,
+      });
+    } else {
+      // 新增商品
+      state.shoppingCart.push({
+        ...payload,
+        cartQuantity: 1,
+      });
+    }
+
+    // 同步localStorage資料
     this.commit('shoppingCart/SetLocalStorage');
   },
   EditProduct(state, payload) {
@@ -29,17 +91,18 @@ const mutations = {
       this.commit('shoppingCart/SetLocalStorage');
     }
   },
-  InitShoppingCart(state) {
-    const res = localStorage.getItem('client_shopping_cart');
-    if (res) {
-      state.shoppingCart = JSON.parse(res);
-    }
-  },
   SetLocalStorage(state) {
-    localStorage.setItem(
-      'client_shopping_cart',
-      JSON.stringify(state.shoppingCart)
-    );
+    // localStorage只存id, 數量
+    // id
+    // cartQuantity
+    const ls = [];
+    state.shoppingCart.forEach((product) => {
+      ls.push({
+        id: product.id,
+        cartQuantity: product.cartQuantity,
+      });
+    });
+    localStorage.setItem('client_shopping_cart', JSON.stringify(ls));
   },
 };
 

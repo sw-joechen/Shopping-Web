@@ -21,7 +21,7 @@
         <div class="product flex items-center p-2 max-w-[820px] flex-grow">
           <div
             :title="item.name"
-            class="text-left break-all flex-grow whitespace-nowrap overflow-hidden text-ellipsis font-bold text-lg"
+            class="text-left break-all flex-grow overflow-hidden text-ellipsis font-bold text-lg"
           >
             {{ item.name }}
           </div>
@@ -32,11 +32,9 @@
           $ {{ item.price }}
         </div>
 
-        <!-- amount -->
-        <div class="amount flex items-center p-2 w-36">
-          <div
-            class="amount flex h-10 w-full rounded-lg relative bg-transparent"
-          >
+        <!-- cartQuantity -->
+        <div class="cartQuantity flex items-center p-2 w-36">
+          <div class="flex h-10 w-full rounded-lg relative bg-transparent">
             <button
               @click="DecrementHandler(item)"
               class="decrement px-3 bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full rounded-l cursor-pointer outline-none"
@@ -44,7 +42,7 @@
               <span class="m-auto text-2xl font-thin">−</span>
             </button>
             <input
-              v-model="item.amount"
+              v-model="item.cartQuantity"
               type="number"
               class="w-full outline-none focus:outline-none text-center bg-gray-300 font-semibold text-md hover:text-black focus:text-black flex items-center text-gray-700"
               @keypress="KeypressHandler"
@@ -59,7 +57,7 @@
         </div>
 
         <div class="totalPrice flex items-center p-2 text-lg">
-          $ {{ item.price * item.amount }}
+          $ {{ item.price * item.cartQuantity }}
         </div>
         <!-- <div class="delete"></div> -->
       </div>
@@ -88,21 +86,6 @@ export default {
   components: {
     BtnPrimary,
   },
-  watch: {
-    // TODO: 看能不能做成computed
-    productList: {
-      deep: true,
-      handler(val) {
-        let readyToCheckoutList = [];
-        val.forEach((el) => {
-          if (el.checked) {
-            readyToCheckoutList.push(el);
-          }
-        });
-        this.subtotal = this.CalculateSubtotal(readyToCheckoutList);
-      },
-    },
-  },
   computed: {
     // id: number
     // name: string
@@ -118,32 +101,27 @@ export default {
     productList() {
       return this.$store.state.shoppingCart.shoppingCart;
     },
-  },
-  data() {
-    return {
-      subtotal: 0,
-    };
+    subtotal() {
+      let test = 0;
+      this.productList.forEach((prod) => {
+        if (prod.checked) {
+          test += prod.price * prod.cartQuantity;
+        }
+      });
+      return test;
+    },
   },
   created() {
-    this.$store.commit('shoppingCart/InitShoppingCart');
+    this.$store.dispatch('shoppingCart/InitShoppingCart');
   },
   methods: {
-    CheckboxChangeHandler(itemProduct) {
+    CheckboxChangeHandler() {
       let readyToCheckoutList = [];
       this.productList.forEach((el) => {
         if (el.checked) {
           readyToCheckoutList.push(el);
         }
       });
-      this.subtotal = this.CalculateSubtotal(readyToCheckoutList);
-      this.$store.commit('shoppingCart/EditProduct', itemProduct);
-    },
-    CalculateSubtotal(payload) {
-      let temp = 0;
-      payload.forEach((el) => {
-        temp += el.price * el.amount;
-      });
-      return temp;
     },
     CheckoutHandler() {
       const deletedCount = this.DeleteProductItem();
@@ -153,7 +131,7 @@ export default {
           content: '請勾選商品',
         });
       }
-      // this.subtotal = this.CalculateSubtotal();
+
       this.$store.commit('eventBus/Push', {
         type: 'success',
         content: '購買成功',
@@ -179,8 +157,8 @@ export default {
         : event.preventDefault();
     },
     DecrementHandler(item) {
-      if (item.amount > 1) {
-        item.amount--;
+      if (item.cartQuantity > 1) {
+        item.cartQuantity--;
         this.$store.commit('shoppingCart/EditProduct', item);
       } else {
         const result = confirm('確定要刪除商品嗎');
@@ -190,8 +168,15 @@ export default {
       }
     },
     IncrementHandler(item) {
-      item.amount++;
-      this.$store.commit('shoppingCart/EditProduct', item);
+      if (item.cartQuantity < item.amount) {
+        item.cartQuantity++;
+        this.$store.commit('shoppingCart/EditProduct', item);
+      } else {
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: '已達購買上限',
+        });
+      }
     },
     redirectImg(path) {
       if (process.env.NODE_ENV === 'development') return path;
