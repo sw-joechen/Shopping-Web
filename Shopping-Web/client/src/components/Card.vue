@@ -12,7 +12,7 @@
         :data-temp="redirectImg(product.picture)"
       />
     </div>
-    <div class="px-5 py-2 flex-grow flex flex-col">
+    <div class="content px-5 py-2 flex-grow flex flex-col">
       <div
         :title="product.name"
         class="name txtEllipsis font-bold text-2xl mb-2"
@@ -25,14 +25,28 @@
       >
         {{ product.description }}
       </div>
-      <div class="btnsWrapper mt-3 flex justify-between">
-        <BtnPrimary label="結帳" @submit="CheckoutHandler" theme="red" />
-        <BtnPrimary
-          theme="green"
-          class="whitespace-nowrap"
-          label="加入購物車"
-          @submit="AddToCartHandler"
-        />
+      <div class="amount flex justify-end mt-1">
+        <div>剩餘數量 {{ product.amount }}</div>
+      </div>
+      <div class="bottom flex">
+        <div class="price leading-10 text-xl text-red2 mr-2">
+          <span class="text-base">$</span>{{ product.price }}
+        </div>
+        <div class="btnsWrapper flex justify-between flex-grow">
+          <BtnPrimary
+            label="結帳"
+            @submit="CheckoutHandler"
+            theme="red"
+            px="px-3"
+          />
+          <BtnPrimary
+            theme="green"
+            class="whitespace-nowrap"
+            label="加入購物車"
+            @submit="AddToCartHandler"
+            px="px-2"
+          />
+        </div>
       </div>
     </div>
   </div>
