@@ -15,6 +15,20 @@
         />
       </div>
 
+      <!-- 餘額 -->
+      <div class="inputGroup mb-[18px] relative flex">
+        <label class="absolute leading-[38px]">
+          {{ $t('common.balance') }}
+        </label>
+        <input
+          v-model="queryInfos.balance"
+          class="pointer-events-none ml-20 w-full shadow border rounded py-2 px-3 text-gray-700 leading-tight"
+          type="text"
+          disabled
+          readonly
+        />
+      </div>
+
       <!-- 地址 -->
       <div class="inputGroup mb-[18px] relative flex">
         <label class="absolute leading-[38px]">
@@ -179,6 +193,7 @@ export default {
     return {
       queryInfos: {
         account: this.$store.state.user.account,
+        balance: null,
         address: '',
         phone: '',
         email: '',
@@ -220,6 +235,7 @@ export default {
       this.queryInfos.email = res.data[0].email;
       this.queryInfos.gender = res.data[0].gender;
       this.queryInfos.enabled = res.data[0].enabled;
+      this.queryInfos.balance = res.data[0].balance;
 
       // 備份原始資料
       this.oldInfos = JSON.parse(JSON.stringify(this.queryInfos));

@@ -6,6 +6,7 @@ export default {
     add: '新增',
     success: '操作成功',
     account: '帳號',
+    balance: '餘額',
     pwd: '密碼',
     address: '地址',
     phone: '電話',
