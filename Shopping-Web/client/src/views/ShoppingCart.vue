@@ -18,7 +18,7 @@
         </div>
 
         <!-- product -->
-        <div class="product flex items-center p-2 max-w-[820px] flex-grow">
+        <div class="product flex items-center p-2 max-w-[800px] flex-grow">
           <div
             :title="item.name"
             class="text-left break-all flex-grow overflow-hidden text-ellipsis font-bold text-lg"
@@ -59,22 +59,46 @@
         <div class="totalPrice flex items-center p-2 text-lg">
           $ {{ item.price * item.cartQuantity }}
         </div>
-        <!-- <div class="delete"></div> -->
+
+        <div class="delete flex items-center">
+          <div
+            class="txt whitespace-nowrap cursor-pointer hover:text-green1"
+            @click="DelProductHandler(item.id)"
+          >
+            刪除
+          </div>
+        </div>
       </div>
     </div>
 
     <hr class="my-2" />
 
-    <div class="summary flex justify-end max-w-[1200px] mx-auto">
-      <div class="subtotal text-red-600 text-2xl px-4 leading-10">
-        $ {{ subtotal }}
+    <div
+      class="summary flex max-w-[1200px] mx-auto"
+      :class="productList.length ? 'justify-between' : 'justify-end'"
+    >
+      <!-- selectAll -->
+      <div class="selectAll flex items-center m-2" v-if="productList.length">
+        <input
+          class="w-5 h-5 mr-4"
+          type="checkbox"
+          id="selectAll"
+          v-model="selectAll"
+          @change="SelectAllChangeHandler"
+        />
+        <label for="selectAll">全選</label>
       </div>
-      <BtnPrimary
-        label="結帳"
-        @submit="CheckoutHandler"
-        :disabled="!productList.length"
-        theme="red"
-      />
+      <div class="flex">
+        <div class="subtotal text-red-600 text-2xl px-4 leading-10">
+          $ {{ subtotal }}
+        </div>
+        <BtnPrimary
+          label="結帳"
+          @submit="CheckoutHandler"
+          :disabled="!productList.length"
+          theme="red"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -85,6 +109,11 @@ export default {
   name: 'shoppingCart',
   components: {
     BtnPrimary,
+  },
+  data() {
+    return {
+      selectAll: false,
+    };
   },
   computed: {
     // id: number
@@ -115,6 +144,14 @@ export default {
     this.$store.dispatch('shoppingCart/InitShoppingCart');
   },
   methods: {
+    SelectAllChangeHandler() {
+      this.productList.forEach((prod) => {
+        this.$store.commit('shoppingCart/EditProduct', {
+          ...prod,
+          checked: this.selectAll,
+        });
+      });
+    },
     CheckboxChangeHandler() {
       let readyToCheckoutList = [];
       this.productList.forEach((el) => {
@@ -124,7 +161,7 @@ export default {
       });
     },
     CheckoutHandler() {
-      const deletedCount = this.DeleteProductItem();
+      const deletedCount = this.BatchDeleteProductItem();
       if (deletedCount === 0) {
         return this.$store.commit('eventBus/Push', {
           type: 'error',
@@ -137,18 +174,21 @@ export default {
         content: '購買成功',
       });
     },
-    DeleteProductItem() {
-      let prodcutIDList = [];
+    BatchDeleteProductItem() {
+      let productIDList = [];
       this.productList.forEach((el) => {
         if (el.checked) {
-          prodcutIDList.push(el.id);
+          productIDList.push(el.id);
         }
       });
 
-      prodcutIDList.forEach((productID) => {
+      productIDList.forEach((productID) => {
         this.$store.commit('shoppingCart/DelProduct', productID);
       });
-      return prodcutIDList.length;
+      return productIDList.length;
+    },
+    DelProductHandler(targetID) {
+      this.$store.commit('shoppingCart/DelProduct', targetID);
     },
     KeypressHandler(event) {
       console.log('event.charCode: ', event.charCode);
