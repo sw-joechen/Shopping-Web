@@ -9,7 +9,7 @@
           v-if="productList.length"
         >
           <input
-            class="w-5 h-5 mr-4"
+            class="w-5 h-5 mr-4 accent-green2"
             type="checkbox"
             id="selectAll"
             v-model="selectAll"
@@ -33,7 +33,7 @@
         <div class="checkbox flex items-center p-2">
           <input
             :class="{ 'opacity-50': !item.enabled }"
-            class="w-5 h-5"
+            class="w-5 h-5 accent-green2"
             type="checkbox"
             id="checkbox"
             v-model="item.checked"
@@ -124,7 +124,7 @@
         <!-- selectAll -->
         <div class="selectAll flex items-center m-2" v-if="productList.length">
           <input
-            class="w-5 h-5 mr-4"
+            class="w-5 h-5 mr-4 accent-green2"
             type="checkbox"
             id="selectAll"
             v-model="selectAll"
