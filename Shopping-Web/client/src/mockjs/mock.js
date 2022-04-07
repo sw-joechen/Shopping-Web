@@ -83,7 +83,7 @@ const GetProductList = () => {
           : '卻一裡巴：就行檢在是後沒陸這奇主，分灣天大山字不，列失裡產人這！是高案民保真像系覺死音消；配連試、同我合些流多和……假小情在成旅一認有病有不出產望好孩軍充清……新人找是施輕爸民生雖重不、來了電情消子學上原，題見他是毛是一麼那一創愛治級子還北去。',
       enabled: getRandom(0, 200) % 2 === 0 ? true : false,
       picture: `https://picsum.photos/200/200?image=${getRandom(0, 200)}`,
-      price: 10,
+      price: 10000,
       type: 't1',
       updatedDate: '2022-03-17T15:43:55.653',
     });
