@@ -16,6 +16,7 @@ module.exports = {
         black3: '#2c3e50',
         black4: '#f5f5f5',
         gray1: 'rgba(0,0,0,0.26)',
+        gray2: '#e5e7eb',
       },
       boxShadow: {
         radioBtn1: '0px 0px 0px 2px white inset',
