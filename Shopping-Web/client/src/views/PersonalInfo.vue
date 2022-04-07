@@ -8,7 +8,7 @@
         </label>
         <input
           v-model="queryInfos.account"
-          class="pointer-events-none ml-20 w-full shadow border rounded py-2 px-3 text-gray-700 leading-tight"
+          class="pointer-events-none opacity-50 appearance-none ml-20 w-full shadow border rounded py-2 px-3 text-gray-700 leading-tight"
           type="text"
           disabled
           readonly
@@ -22,7 +22,7 @@
         </label>
         <input
           v-model="queryInfos.balance"
-          class="pointer-events-none ml-20 w-full shadow border rounded py-2 px-3 text-gray-700 leading-tight"
+          class="pointer-events-none ml-20 w-full shadow opacity-50 appearance-none border rounded py-2 px-3 text-gray-700 leading-tight"
           type="text"
           disabled
           readonly
