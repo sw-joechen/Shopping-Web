@@ -46,7 +46,6 @@ const actions = {
           });
           return true;
         }
-        // TODO: 找不到匹配的商品要從購物車中移除
       });
     });
   },
@@ -79,6 +78,8 @@ const mutations = {
     );
     if (targetIndex !== -1) {
       state.shoppingCart.splice(targetIndex, 1, payload);
+
+      // 同步localStorage資料
       this.commit('shoppingCart/SetLocalStorage');
     }
   },
@@ -88,6 +89,8 @@ const mutations = {
     );
     if (targetIndex !== -1) {
       state.shoppingCart.splice(targetIndex, 1);
+
+      // 同步localStorage資料
       this.commit('shoppingCart/SetLocalStorage');
     }
   },
@@ -95,6 +98,7 @@ const mutations = {
     // localStorage只存id, 數量
     // id
     // cartQuantity
+    // 每一次的新刪修都會觸發同步LS, 這時候會清除已經記在LS但是被刪掉的商品
     const ls = [];
     state.shoppingCart.forEach((product) => {
       ls.push({
