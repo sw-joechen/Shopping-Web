@@ -9,13 +9,25 @@
           v-if="productList.length"
         >
           <input
-            class="w-5 h-5 mr-4 accent-green2"
-            type="checkbox"
             id="selectAll"
+            type="checkbox"
+            class="hidden peer"
             v-model="selectAll"
+            :checked="selectAll"
             @change="SelectAllChangeHandler"
           />
-          <label for="selectAll">商品</label>
+          <label
+            for="selectAll"
+            class="flex items-center cursor-pointer select-none"
+          >
+            <span
+              class="w-5 h-5 mr-4 inline-block rounded-[4px] border border-green3 transition-all duration-200 bg-white"
+              :class="{
+                'bg-green6 shadow-radioBtn1': selectAll,
+              }"
+            />
+            商品
+          </label>
         </div>
         <div class="price w-[110px] leading-10">單價</div>
         <div class="amount w-36 leading-10">數量</div>
@@ -32,13 +44,25 @@
         <!-- checkbox -->
         <div class="checkbox flex items-center p-2">
           <input
-            :class="{ 'opacity-50': !item.enabled }"
-            class="w-5 h-5 accent-green2"
+            :id="`checkox-${item.id}`"
             type="checkbox"
-            id="checkbox"
+            class="hidden peer"
             v-model="item.checked"
+            :checked="item.checked"
             @change="CheckboxChangeHandler(item)"
           />
+          <label
+            :for="`checkox-${item.id}`"
+            class="flex items-center cursor-pointer select-none"
+          >
+            <span
+              class="w-5 h-5 inline-block rounded-[4px] border border-green3 transition-all duration-200 bg-white"
+              :class="[
+                { 'opacity-50': !item.enabled },
+                { 'bg-green6 shadow-radioBtn1': item.checked },
+              ]"
+            />
+          </label>
         </div>
 
         <div class="imgContainer flex justify-center py-2">
@@ -125,13 +149,24 @@
         <!-- selectAll -->
         <div class="selectAll flex items-center m-2" v-if="productList.length">
           <input
-            class="w-5 h-5 mr-4 accent-green2"
-            type="checkbox"
             id="selectAll"
+            type="checkbox"
+            class="hidden peer"
             v-model="selectAll"
-            @change="SelectAllChangeHandler"
+            :checked="selectAll"
           />
-          <label for="selectAll">全選</label>
+          <label
+            for="selectAll"
+            class="flex items-center cursor-pointer select-none"
+          >
+            <span
+              class="w-5 h-5 mr-4 inline-block rounded-[4px] border border-green3 transition-all duration-200 bg-white"
+              :class="{
+                'bg-green6 shadow-radioBtn1': selectAll,
+              }"
+            />
+            商品
+          </label>
         </div>
         <div class="batchDel mx-3">
           <BtnPrimary
