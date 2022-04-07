@@ -84,10 +84,11 @@
               <span class="m-auto text-2xl font-thin">−</span>
             </button>
             <input
-              v-model="item.cartQuantity"
+              v-model.number="item.cartQuantity"
               type="number"
               class="w-full outline-none focus:outline-none text-center bg-gray-300 font-semibold text-md hover:text-black focus:text-black flex items-center text-gray-700"
               @keypress="KeypressHandler"
+              @change="CartQuantityChangeHandler(item)"
             />
             <button
               @click="IncrementHandler(item)"
@@ -197,6 +198,16 @@ export default {
     this.$store.dispatch('shoppingCart/InitShoppingCart');
   },
   methods: {
+    CartQuantityChangeHandler(product) {
+      if (product.cartQuantity > product.amount) {
+        alert('已超過可購買數量');
+        product.cartQuantity = product.amount;
+      } else if (product.cartQuantity <= 0) {
+        alert('最少選購數量為1');
+        product.cartQuantity = 1;
+      }
+      this.$store.commit('shoppingCart/EditProduct', product);
+    },
     resetSelectAll() {
       this.selectAll = false;
     },
@@ -261,7 +272,6 @@ export default {
       if (result) this.$store.commit('shoppingCart/DelProduct', targetID);
     },
     KeypressHandler(event) {
-      console.log('event.charCode: ', event.charCode);
       return event.charCode >= 48 && event.charCode <= 57
         ? true
         : event.preventDefault();
