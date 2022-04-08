@@ -1,17 +1,14 @@
-﻿using Newtonsoft.Json;
-using Shopping_Web.Class;
-using Shopping_Web.Models;
-using Shopping_Web.Validators;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using Newtonsoft.Json;
+using Shopping_Web.Class;
+using Shopping_Web.Models;
+using Shopping_Web.Validators;
 
 namespace Shopping_Web.Controllers
 {

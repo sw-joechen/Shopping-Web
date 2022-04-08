@@ -1,14 +1,12 @@
-﻿using Shopping_Web.Class;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using Newtonsoft.Json;
+using Shopping_Web.Class;
 
 namespace Shopping_Web.Controllers
 {
@@ -78,7 +76,7 @@ namespace Shopping_Web.Controllers
                             {
                                 productList.Add(new Product
                                 {
-                                    id = r["f_id"].ToString(),
+                                    id = Convert.ToInt32(r["f_id"]),
                                     name = r["f_name"].ToString(),
                                     description = r["f_description"].ToString(),
                                     price = Convert.ToInt32(r["f_price"]),
@@ -91,6 +89,7 @@ namespace Shopping_Web.Controllers
                                 });
                             }
                             result.Set(200, "success", productList);
+                            Debug.WriteLine($"productList=> {JsonConvert.SerializeObject(productList)}");
                         }
                         else
                         {
