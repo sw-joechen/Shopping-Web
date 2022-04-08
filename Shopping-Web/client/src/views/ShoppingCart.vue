@@ -165,7 +165,7 @@
                 'bg-green6 shadow-radioBtn1': selectAll,
               }"
             />
-            商品
+            全選
           </label>
         </div>
         <div class="batchDel mx-3">
@@ -269,11 +269,9 @@ export default {
       });
     },
     CheckboxChangeHandler() {
-      let readyToCheckoutList = [];
-      this.productList.forEach((el) => {
-        if (el.checked) {
-          readyToCheckoutList.push(el);
-        }
+      // 只要有項目沒有被勾選, 就重置全選checkbox
+      this.selectAll = !this.productList.some((el) => {
+        if (!el.checked) return true;
       });
     },
     CheckoutHandler() {
@@ -337,7 +335,7 @@ export default {
     },
     redirectImg(path) {
       if (process.env.NODE_ENV === 'development') return path;
-      return `http://localhost:15770${path}`;
+      return `http://localhost:8080${path}`;
     },
   },
 };

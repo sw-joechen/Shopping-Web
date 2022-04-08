@@ -97,10 +97,6 @@ export default {
       this.$store.commit('shoppingCart/AddProduct', {
         ...this.product,
       });
-      this.$store.commit('eventBus/Push', {
-        type: 'success',
-        content: '加入購物車成功',
-      });
     },
     CheckoutHandler() {
       this.AddToCartHandler();
@@ -108,7 +104,7 @@ export default {
     },
     redirectImg(path) {
       if (process.env.NODE_ENV === 'development') return path;
-      return `http://localhost:15770${path}`;
+      return `http://localhost:8080${path}`;
     },
   },
 };

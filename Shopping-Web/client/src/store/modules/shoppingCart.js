@@ -53,19 +53,33 @@ const actions = {
 
 const mutations = {
   AddProduct(state, payload) {
-    // 先確認有沒有重複的商品, 有的話數量+1
+    // 先確認有沒有重複的商品, ＋1後的數量有沒有超過上限, 都符合的話數量+1
     const idx = state.shoppingCart.findIndex((item) => item.id === payload.id);
     if (idx !== -1) {
       const cartQuantity = state.shoppingCart[idx].cartQuantity;
-      state.shoppingCart.splice(idx, 1, {
-        ...payload,
-        cartQuantity: cartQuantity + 1,
-      });
+      if (cartQuantity < state.shoppingCart[idx].amount) {
+        state.shoppingCart.splice(idx, 1, {
+          ...payload,
+          cartQuantity: cartQuantity + 1,
+        });
+
+        this.commit('eventBus/Push', {
+          type: 'success',
+          content: '加入購物車成功',
+        });
+      } else {
+        alert('已達數量上限');
+      }
     } else {
       // 新增商品
       state.shoppingCart.push({
         ...payload,
         cartQuantity: 1,
+      });
+
+      this.commit('eventBus/Push', {
+        type: 'success',
+        content: '加入購物車成功',
       });
     }
 
