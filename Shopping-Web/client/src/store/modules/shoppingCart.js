@@ -1,4 +1,5 @@
 import { GetProductList } from '@/APIs/product';
+import { IsPureNumber } from '@/Utils/validators';
 
 const state = () => ({
   // {
@@ -24,8 +25,14 @@ const actions = {
   async InitShoppingCart(context) {
     let lsList = [];
     // 從localStorage取出暫存清單
-    if (localStorage.getItem('client_shopping_cart'))
-      lsList = JSON.parse(localStorage.getItem('client_shopping_cart'));
+    try {
+      if (localStorage.getItem('client_shopping_cart'))
+        lsList = JSON.parse(localStorage.getItem('client_shopping_cart'));
+    } catch (e) {
+      // 防止ls塞奇怪的東西
+      localStorage.removeItem('client_shopping_cart');
+      lsList = [];
+    }
 
     // TODO: 應該要改呼叫批次搜尋id的接口
     let productList = [];
@@ -38,12 +45,18 @@ const actions = {
     context.state.shoppingCart.splice(0, context.state.shoppingCart.length);
     lsList.forEach((cartItem) => {
       return productList.some((product) => {
-        if (cartItem.id === product.id) {
+        if (cartItem.id === product.id && IsPureNumber(cartItem.cartQuantity)) {
           context.state.shoppingCart.push({
             ...product,
-            cartQuantity: cartItem.cartQuantity,
+            cartQuantity:
+              cartItem.cartQuantity <= 0 ||
+              cartItem.cartQuantity > product.amount
+                ? 1
+                : cartItem.cartQuantity,
             checked: false,
           });
+          return true;
+        } else {
           return true;
         }
       });
