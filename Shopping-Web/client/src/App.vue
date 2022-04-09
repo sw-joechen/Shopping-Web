@@ -15,6 +15,7 @@ export default {
   },
   created() {
     document.title = '阿進購物';
+    this.$store.dispatch('shoppingCart/InitShoppingCart');
   },
 };
 </script>

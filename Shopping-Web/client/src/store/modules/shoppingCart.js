@@ -45,7 +45,10 @@ const actions = {
     context.state.shoppingCart.splice(0, context.state.shoppingCart.length);
     lsList.forEach((cartItem) => {
       return productList.some((product) => {
-        if (cartItem.id === product.id && IsPureNumber(cartItem.cartQuantity)) {
+        if (cartItem.id === product.id) {
+          // 檢查數量是否為數字
+          if (!IsPureNumber(cartItem.cartQuantity)) return true;
+
           context.state.shoppingCart.push({
             ...product,
             cartQuantity:
@@ -55,8 +58,6 @@ const actions = {
                 : cartItem.cartQuantity,
             checked: false,
           });
-          return true;
-        } else {
           return true;
         }
       });

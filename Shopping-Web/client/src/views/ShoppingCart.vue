@@ -229,9 +229,7 @@ export default {
       return test;
     },
   },
-  created() {
-    this.$store.dispatch('shoppingCart/InitShoppingCart');
-  },
+
   methods: {
     CartQuantityChangeHandler(product) {
       if (product.cartQuantity > product.amount) {
@@ -269,6 +267,7 @@ export default {
       });
     },
     CheckboxChangeHandler() {
+      // TODO: try try js.every
       // 只要有項目沒有被勾選, 就重置全選checkbox
       this.selectAll = !this.productList.some((el) => {
         if (!el.checked) return true;
