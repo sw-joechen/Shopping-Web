@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using Newtonsoft.Json;
@@ -492,7 +494,7 @@ namespace Shopping_Web.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/{controller}/purchase")]
-        public string Purchase([FromBody] PurchasePayload payload)
+        public async Task<string> Purchase([FromBody] PurchasePayload payload)
         {
             Result result = new Result(100, "缺少參數");
             List<Product> productList = new List<Product> { };
@@ -617,21 +619,22 @@ namespace Shopping_Web.Controllers
 
                 if (!isShoppingListAllValid)
                 {
+                    Object data = new { id = invalidProductItemID };
                     switch (rejectCondition)
                     {
                         case 0:
                             {
-                                result.Set(119, "結帳清單包含被禁用的商品");
+                                result.Set(119, "結帳清單包含被禁用的商品", data);
                                 break;
                             }
                         case 1:
                             {
-                                result.Set(120, "結帳清單包含無效的數量");
+                                result.Set(120, "結帳清單包含無效的數量", data);
                                 break;
                             }
                         case 2:
                             {
-                                result.Set(121, "結帳清單包含無效的商品");
+                                result.Set(121, "結帳清單包含無效的商品", data);
                                 break;
                             }
                         default:
@@ -661,22 +664,22 @@ namespace Shopping_Web.Controllers
                             if (r.Read())
                             {
                                 sqlResponse = (int)r["result"];
-                                //Debug.WriteLine($"id: {r["id"]}");
-                                //Debug.WriteLine($"count: {r["count"]}");
-                                //Debug.WriteLine($"f_tempID: {r["f_tempID"]}");
-                                //Debug.WriteLine($"f_tempID: {r["f_tempCount"]}");
-                                //
+                                Debug.WriteLine($"sqlResponse: {sqlResponse}");
                             }
                         }
 
                         switch (sqlResponse){
                             case 200:
+                                AddPurchaseRecord(payload);
                                 result.Set(200, "success");
                                 break;
                             case 100:
                                 result.Set(105, "帳號錯誤");
                                 break;
                             case 101:
+                                result.Set(108, "該帳號已被禁用");
+                                break;
+                            case 102:
                                 result.Set(122, "餘額不足");
                                 break;
                             default:
@@ -709,122 +712,132 @@ namespace Shopping_Web.Controllers
             return dt;
         }
 
+        private static DataTable ToDataTable<T>(List<T> items)
+        {
+            DataTable dataTable = new DataTable(typeof(T).Name);
+
+            //Get all the properties
+            PropertyInfo[] Props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (PropertyInfo prop in Props)
+            {
+                //Defining type of data column gives proper data table 
+                var type = (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(prop.PropertyType) : prop.PropertyType);
+                //Setting column names as Property names
+                dataTable.Columns.Add(prop.Name, type);
+            }
+            foreach (T item in items)
+            {
+                var values = new object[Props.Length];
+                for (int i = 0; i < Props.Length; i++)
+                {
+                    //inserting property values to datatable rows
+                    values[i] = Props[i].GetValue(item, null);
+                }
+                dataTable.Rows.Add(values);
+            }
+            //put a breakpoint here and check datatable
+            return dataTable;
+        }
+
         /// <summary>
         /// 新增購買記錄
-        /// TODO: 這隻接口之後只需要自己摳, 不需要暴露出去
         /// </summary>
-        [HttpPost]
-        [Route("api/{controller}/addPurchaseRecord")]
-        public string AddPurchaseRecord()
+        private string AddPurchaseRecord(PurchasePayload payload)
         {
             Result result = new Result(100, "缺少參數");
+            Member memberInfo = new Member();
+            //List<Product> productList = new List<Product> { };
+            //Dictionary<int, int> shoppingCartDict = new Dictionary<int, int>();
 
-            //if (!Request.Content.IsMimeMultipartContent())
-            //{
-            //    result.Set(110, "上傳格式錯誤");
-            //    return result.Stringify();
-            //}
-
-            var httpRequest = HttpContext.Current.Request;
-
-            if (
-                httpRequest.Params["account"] == null ||
-                httpRequest.Params["phone"] == null ||
-                httpRequest.Params["address"] == null
-            )
+            if (payload == null || payload.account == null || payload.shoppingList == null)
             {
-                result.Set(100, "缺少參數");
                 return result.Stringify();
             }
 
             try
             {
-                string account = httpRequest.Params["account"];
-                string phone = httpRequest.Params["phone"];
-                string address = httpRequest.Params["address"];
-                DateTime dt = DateTime.UtcNow;
-                string createdDate = dt.ToString(@"yyyy-MM-dd\THH:mm:ss\Z");
-                string temp = $"{((DateTimeOffset)dt).ToUnixTimeSeconds()}{account}";
+                string account = payload.account;
+                List<ShoppingItem> shoppingList = payload.shoppingList;
+                DataTable shoppingTd = new DataTable();
+                shoppingTd = ToDataTable(shoppingList);
 
-                //var md5Hasher = MD5Hasher.GetMd5Hash(temp);
+                DateTime dt = DateTime.UtcNow;
+                string year = dt.Year.ToString().Substring(2);
+                string month = dt.Month.ToString("00");
+                string day = dt.Day.ToString("00");
+                string hour = dt.Hour.ToString("00");
+                string minute = dt.Minute.ToString("00");
+                string second = dt.Second.ToString("00");
 
                 Debug.WriteLine($"account=> {account}");
-                Debug.WriteLine($"phone=> {phone}");
-                Debug.WriteLine($"address=> {address}");
-                Debug.WriteLine($"createdDate=> {createdDate}");
-                Debug.WriteLine($"temp=> {temp}");
-                //Debug.WriteLine($"md5Hasher=> {md5Hasher}");
-                // 檢查價格不可為負數
-                //if (Convert.ToInt32(price) < 0)
-                //{
-                //    result.Set(114, "價格與數量不可為負");
-                //    return result.Stringify();
-                //}
+                Debug.WriteLine($"shoppingList=> {JsonConvert.SerializeObject(shoppingList)}");
+                Debug.WriteLine($"shoppingTd=> {JsonConvert.SerializeObject(shoppingTd)}");
 
-                // 檢查數量不可為負數
-                //if (Convert.ToInt32(amount) < 0)
-                //{
-                //    result.Set(114, "價格與數量不可為負");
-                //    return result.Stringify();
-                //}
-
-                // 檢查名稱
-                //SpecialCharacterValidator specialCharacterValidator = new SpecialCharacterValidator();
-                //if (specialCharacterValidator.IsStrContainSpecialCharacter(name))
-                //{
-                //    result.Set(113, "商品名稱不合法");
-                //    return result.Stringify();
-                //}
-
-                // 檢查描述
-                //if (specialCharacterValidator.IsStrContainSpecialCharacter(description))
-                //{
-                //    result.Set(115, "商品描述不合法");
-                //    return result.Stringify();
-                //}
-
-                //var postedFile = httpRequest.Files[0];
-
-                //// 串上時戳_原始檔名
-                //var filePath = HttpContext.Current.Server.MapPath($"~/Uploads/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}");
-                //postedFile.SaveAs(filePath);
-
-                //picture = $"/{DateTimeOffset.Now.ToUnixTimeSeconds()}_{postedFile.FileName}";
-
-                //// 寫進庫
+                // 進庫撈會員資訊
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
-                    var sqlResponse = 0;
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("pro_saw_addPurchaseRecord", conn))
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_getMemberList", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        //cmd.Parameters.AddWithValue("@orderNumber", md5Hasher);
                         cmd.Parameters.AddWithValue("@account", account);
-                        cmd.Parameters.AddWithValue("@phone", phone);
-                        cmd.Parameters.AddWithValue("@address", address);
+                        cmd.Parameters.AddWithValue("@enabled", DBNull.Value);
+                        SqlDataReader r = cmd.ExecuteReader();
+                        if (r.HasRows)
+                        {
+                            while (r.Read())
+                            {
+                                memberInfo.id = Convert.ToInt16(r["f_id"]);
+                                memberInfo.account = r["f_account"].ToString();
+                                memberInfo.address = r["f_address"].ToString();
+                                memberInfo.phone = r["f_phone"].ToString();
+                                memberInfo.gender = Convert.ToInt16(r["f_gender"]);
+                                memberInfo.email = r["f_email"].ToString();
+                                memberInfo.enabled = Convert.ToBoolean(Convert.ToInt16(r["f_enabled"]));
+                                memberInfo.createdDate = r["f_createdDate"].ToString();
+                                memberInfo.updatedDate = r["f_updatedDate"].ToString();
+                                memberInfo.balance = Convert.ToDouble(r["f_balance"]);                                
+                            }
+                        }                        
+                    }
+                }
+                Debug.WriteLine($"memberInfo=> {JsonConvert.SerializeObject(memberInfo)}");
+                string accountID = memberInfo.id.ToString("00000000");
+
+                // 組出訂單編號
+                string orderNumber = year+month+day+hour+minute+second+accountID;
+                string createdDate = dt.ToString("yyyy-MM-ddTHH:mm:sssZ");
+
+                using (SqlConnection conn = new SqlConnection(connectString))
+                {
+                    conn.Open();
+                    // 寫購買紀錄進庫
+                    using (SqlCommand cmd = new SqlCommand("pro_sw_addPurchaseRecord", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@orderNumber", orderNumber);
+                        cmd.Parameters.AddWithValue("@account", account);
+                        cmd.Parameters.AddWithValue("@phone", memberInfo.phone);
+                        cmd.Parameters.AddWithValue("@address", memberInfo.address);
                         cmd.Parameters.AddWithValue("@createdDate", createdDate);
                         SqlDataReader r = cmd.ExecuteReader();
-                        if (r.Read())
-                        {
-                            sqlResponse = (int)r["result"];
-                        }
                     }
 
-                    if (sqlResponse == 200)
+                    // 寫購買明細進庫
+                    using (SqlCommand cmd = new SqlCommand("pro_sw_addSubPurchaseRecord", conn))
                     {
-                        result.Set(200, "success");
-                    }
-                    else
-                    {
-                        result.Set(101, "網路錯誤");
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@orderNumber", orderNumber);
+                        cmd.Parameters.AddWithValue("@shoppingDetail", shoppingTd);
+                        SqlDataReader r = cmd.ExecuteReader();
                     }
                 }
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                return $"exception=> {e}";
+                result.Set(101, "網路錯誤");
+                return result.Stringify();
             }
             return result.Stringify();
         }
