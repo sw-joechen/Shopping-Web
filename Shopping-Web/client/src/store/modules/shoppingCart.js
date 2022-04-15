@@ -85,16 +85,20 @@ const mutations = {
         alert('已達數量上限');
       }
     } else {
-      // 新增商品
-      state.shoppingCart.push({
-        ...payload,
-        cartQuantity: 1,
-      });
+      if (payload.amount > 0) {
+        // 新增商品
+        state.shoppingCart.push({
+          ...payload,
+          cartQuantity: 1,
+        });
 
-      this.commit('eventBus/Push', {
-        type: 'success',
-        content: '加入購物車成功',
-      });
+        this.commit('eventBus/Push', {
+          type: 'success',
+          content: '加入購物車成功',
+        });
+      } else {
+        alert('商品已售完');
+      }
     }
 
     // 同步localStorage資料

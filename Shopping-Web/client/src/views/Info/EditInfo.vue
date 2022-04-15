@@ -1,5 +1,5 @@
 <template>
-  <div class="personalInfo flex justify-center items-center">
+  <div class="editInfo flex justify-center items-center">
     <div class="wrapper w-[400px] h-[600px]">
       <!-- 帳號 -->
       <div class="inputGroup mb-[18px] relative flex">
@@ -184,7 +184,7 @@ import {
 } from '@/Utils/validators';
 import FormDialog from '@/components/Dialogs/DialogView.vue';
 export default {
-  name: 'personalInfo',
+  name: 'editInfo',
   components: {
     BtnPrimary,
     FormDialog,

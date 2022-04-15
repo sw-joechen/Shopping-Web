@@ -30,4 +30,13 @@ export default {
     phoneWarning: '電話格式錯誤',
     emailWarning: '信箱格式錯誤',
   },
+  purchaseHistoryTable: {
+    orderNumber: '訂單編號',
+    account: '帳號',
+    address: '地址',
+    phone: '電話',
+    shoppingList: '購買商品清單',
+    orderPrice: '訂單總價',
+    createdDate: '訂單成立時間',
+  },
 };

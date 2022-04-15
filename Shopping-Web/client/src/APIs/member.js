@@ -69,3 +69,31 @@ export const UpdateMemberPwd = (data) => {
       console.log('err: ', err);
     });
 };
+
+export const GetMemberPurchaseHistory = (data) => {
+  return request({
+    method: 'post',
+    url: '/api/member/getMemberPurchaseHistory',
+    data,
+  })
+    .then((res) => {
+      return JSON.parse(res.data);
+    })
+    .catch((err) => {
+      console.log('err: ', err);
+    });
+};
+
+export const Purchase = (data) => {
+  return request({
+    method: 'post',
+    url: '/api/member/purchase',
+    data,
+  })
+    .then((res) => {
+      return JSON.parse(res.data);
+    })
+    .catch((err) => {
+      console.log('err: ', err);
+    });
+};

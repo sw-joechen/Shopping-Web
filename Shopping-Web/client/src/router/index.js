@@ -15,16 +15,28 @@ const routes = [
       {
         path: 'home',
         name: 'home',
-
         component: () => import('../views/HomeView.vue'),
       },
       {
         path: 'info',
         name: 'info',
-        component: () => import('../views/PersonalInfo.vue'),
+        component: () => import('../views/Info/InfoView.vue'),
         meta: {
           isAuthRequired: true,
         },
+        redirect: '/info/editInfo',
+        children: [
+          {
+            path: 'editInfo',
+            name: 'editInfo',
+            component: () => import('../views/Info/EditInfo.vue'),
+          },
+          {
+            path: 'purchaseHistory',
+            name: 'purchaseHistory',
+            component: () => import('../views/Info/PurchaseHistory.vue'),
+          },
+        ],
       },
       {
         path: 'shoppingCart',

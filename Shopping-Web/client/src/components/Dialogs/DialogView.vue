@@ -11,7 +11,8 @@
       class="dialog_inner flex justify-center items-center p-6 pointer-events-none fixed inset-0"
     >
       <div
-        class="dialog_card relative max-w-[560px] rounded-[4px] bg-white p-4 pointer-events-auto"
+        :class="maxWidth"
+        class="dialog_card relative rounded-[4px] bg-white p-4 pointer-events-auto"
       >
         <div class="mb-5 text-2xl">{{ title }}</div>
         <div class="form">
@@ -40,6 +41,11 @@ export default {
     title: {
       required: true,
       type: String,
+    },
+    maxWidth: {
+      required: false,
+      type: String,
+      default: 'max-w-[560px]',
     },
   },
   methods: {

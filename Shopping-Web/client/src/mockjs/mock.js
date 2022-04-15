@@ -52,7 +52,7 @@ const GetMemberPersonalInfo = (payload) => {
       gender: 1,
       email: 'test@test.com',
       enabled: 1,
-      balance: 1.23,
+      balance: 50000,
       createdDate: '2022-03-07T15:41:06.280',
       updatedDate: '2022-03-07T15:41:06.280',
     });
@@ -75,7 +75,7 @@ const GetProductList = () => {
         getRandom(0, 200) % 2 === 0
           ? '名稱拉；海法馬麼巴備制大利總下方氣形父音？'
           : '就行檢在是後沒陸這奇主，分灣天大山字不，列失裡產人這！是高案民保真像系覺死音消；配連試、同我合些流多',
-      amount: 100,
+      amount: 1,
       createdDate: '2022-03-17T15:43:55.653',
       description:
         getRandom(0, 200) % 2 === 0
@@ -96,6 +96,29 @@ const GetProductList = () => {
   return JSON.stringify(result);
 };
 
+const GetMemberPurchaseHistory = (payload) => {
+  const params = JSON.parse(payload.body);
+  const result = {
+    code: 200,
+    msg: 'success',
+    data: [
+      {
+        orderNumber: '22041307454400001011',
+        account: params.account,
+        phone: '0987654321',
+        address: 'address 台中市西屯區顆顆路嘻嘻街87巷1樓',
+        createdDate: '2022-04-13T07:45:44.666',
+        shoppingList: [
+          { id: 14, count: 20 },
+          { id: 15, count: 100 },
+          { id: 17, count: 1000 },
+        ],
+      },
+    ],
+  };
+  return JSON.stringify(result);
+};
+
 //產生min到max之間的亂數
 const getRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -108,6 +131,8 @@ if (process.env.NODE_ENV === 'development') {
   Mock.mock('/api/member/registerMember', Register);
 
   Mock.mock('/api/member/getMemberPersonalInfo', GetMemberPersonalInfo);
+
+  Mock.mock('/api/member/getMemberPurchaseHistory', GetMemberPurchaseHistory);
 
   // product
   Mock.mock('/api/product/getProductsList', GetProductList);
