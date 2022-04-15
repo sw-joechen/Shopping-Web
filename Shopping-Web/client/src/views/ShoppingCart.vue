@@ -2,6 +2,7 @@
   <div class="shoppingCart">
     <div class="wrapper max-w-[1200px] mx-auto mb-2">
       <!-- 表頭 -->
+      <!-- TODO: 改用table -->
       <div class="header flex border-b border-gray2">
         <!-- selectAll -->
         <div
@@ -183,25 +184,100 @@
         </div>
         <BtnPrimary
           label="結帳"
-          @submit="CheckoutHandler"
+          @submit="ReadyToCheckoutHandler"
           :disabled="!productList.length"
           theme="red"
         />
       </div>
     </div>
+
+    <!-- 結帳對話窗 -->
+    <FormDialog
+      title="確認訂單"
+      v-if="isShowConfirmDialog"
+      :isShowDialog="isShowConfirmDialog"
+      @toggle="ToggleConfirmDialogHandler"
+      @submit="SubmitCheckoutHandler"
+      maxWidth="max-w-[960px]"
+    >
+      <table class="w-full pt-5">
+        <thead>
+          <tr
+            class="text-left border-t border-b-2 border-grey2 p-2 bg-green7 text-white text-xl;"
+          >
+            <th
+              class="py-3 px-1 min-w-[120px] text-center"
+              scope="col"
+              v-for="col in columns"
+              :key="col"
+            >
+              {{ col }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="item in checkedAndEnabledProductList"
+            :key="item.id"
+            class="even:bg-gray-300 hover:bg-gray-400 even:border-b odd:bg-white border-gray-400 p-2"
+          >
+            <td class="name bodyTd">
+              <div class="max-w-xs text-center">
+                <span class="break-all">
+                  {{ item.name }}
+                </span>
+              </div>
+            </td>
+
+            <td class="price bodyTd">
+              <div class="max-w-xs text-center">
+                <span class="break-all"> $ {{ item.price }} </span>
+              </div>
+            </td>
+
+            <td class="cartQuantity bodyTd">
+              <div class="max-w-xs text-center">
+                <span class="break-all">
+                  {{ item.cartQuantity }}
+                </span>
+              </div>
+            </td>
+
+            <td class="totalPrice bodyTd">
+              <div class="max-w-xs text-center">
+                <span class="break-all">
+                  $ {{ item.price * item.cartQuantity }}
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="flex">
+        <div class="subtotal text-red-600 text-2xl px-4 leading-10">
+          $ {{ subtotal }}
+        </div>
+      </div>
+    </FormDialog>
   </div>
 </template>
 
 <script>
 import BtnPrimary from '@/components/BtnPrimary.vue';
+import FormDialog from '@/components/Dialogs/DialogView.vue';
+import { Purchase, GetMemberPersonalInfo } from '@/APIs/member';
+import ErrorCodeList from '@/ErrorCodeList';
 export default {
   name: 'shoppingCart',
   components: {
     BtnPrimary,
+    FormDialog,
   },
   data() {
     return {
       selectAll: false,
+      isShowConfirmDialog: false,
+      columns: ['名稱', '單價', '數量', '總計'],
     };
   },
   computed: {
@@ -219,18 +295,68 @@ export default {
     productList() {
       return this.$store.state.shoppingCart.shoppingCart;
     },
-    subtotal() {
-      let test = 0;
-      this.productList.forEach((prod) => {
-        if (prod.checked && prod.enabled) {
-          test += prod.price * prod.cartQuantity;
+    checkedAndEnabledProductList() {
+      return this.productList.reduce((prev, current) => {
+        if (current.checked && current.enabled) {
+          return [...prev, current];
         }
+        return prev;
+      }, []);
+    },
+    subtotal() {
+      let result = 0;
+      this.checkedAndEnabledProductList.forEach((prod) => {
+        result += prod.price * prod.cartQuantity;
       });
-      return test;
+      return result;
     },
   },
 
   methods: {
+    ReadyToCheckoutHandler() {
+      const ready2BeDeletedList = [];
+      this.checkedAndEnabledProductList.forEach((prod) => {
+        ready2BeDeletedList.push(prod.id);
+      });
+
+      if (ready2BeDeletedList.length === 0) {
+        return this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: '請勾選商品',
+        });
+      }
+      this.ToggleConfirmDialogHandler();
+    },
+    async SubmitCheckoutHandler() {
+      const userBalance = await this.GetMemberBalance();
+      if (userBalance >= this.subtotal) {
+        this.CheckoutHandler();
+        this.ToggleConfirmDialogHandler();
+      } else {
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: '餘額不足',
+        });
+      }
+    },
+    async GetMemberBalance() {
+      const fd = new FormData();
+      fd.append('account', this.$store.state.user.account);
+
+      const res = await GetMemberPersonalInfo(fd);
+      if (res.code === 200 && res.data.length) {
+        return res.data[0].balance;
+      } else {
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: '網路錯誤',
+        });
+        return null;
+      }
+    },
+    ToggleConfirmDialogHandler() {
+      this.isShowConfirmDialog = !this.isShowConfirmDialog;
+    },
     CartQuantityChangeHandler(product) {
       if (product.cartQuantity > product.amount) {
         alert('已超過可購買數量');
@@ -273,26 +399,43 @@ export default {
         if (!el.checked) return true;
       });
     },
-    CheckoutHandler() {
+    async CheckoutHandler() {
       const ready2BeDeletedList = [];
-      this.productList.forEach((el) => {
-        if (el.checked && el.enabled) {
-          ready2BeDeletedList.push(el.id);
-        }
+      this.checkedAndEnabledProductList.forEach((prod) => {
+        ready2BeDeletedList.push(prod.id);
       });
 
-      this.BatchDeleteProductItem(ready2BeDeletedList);
-      if (ready2BeDeletedList.length === 0) {
-        return this.$store.commit('eventBus/Push', {
+      // 整理要送出結帳的商品清單
+      let shoppingList = [];
+      this.checkedAndEnabledProductList.forEach((el) => {
+        shoppingList.push({
+          id: el.id,
+          count: el.cartQuantity,
+        });
+      });
+
+      const res = await Purchase({
+        account: this.$store.state.user.account,
+        shoppingList,
+      });
+
+      if (res.code === 200) {
+        this.BatchDeleteProductItem(ready2BeDeletedList);
+
+        this.$store.commit('eventBus/Push', {
+          type: 'success',
+          content: '購買成功',
+        });
+      } else {
+        this.$store.dispatch('shoppingCart/InitShoppingCart');
+        this.resetSelectAll();
+        // TODO: 畫面錯誤處理
+        this.$store.commit('eventBus/Push', {
           type: 'error',
-          content: '請勾選商品',
+          // content: '請確認商品',
+          content: ErrorCodeList[res.code],
         });
       }
-
-      this.$store.commit('eventBus/Push', {
-        type: 'success',
-        content: '購買成功',
-      });
     },
     BatchDeleteProductItem(list) {
       list.forEach((productID) => {
