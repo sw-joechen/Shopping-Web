@@ -225,7 +225,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="item in checkedAndEnabledProductList"
+            v-for="item in finalConfirmProductList"
             :key="item.id"
             class="even:bg-gray-300 hover:bg-gray-400 even:border-b odd:bg-white border-gray-400 p-2"
           >
@@ -311,6 +311,14 @@ export default {
         return prev;
       }, []);
     },
+    finalConfirmProductList() {
+      return this.checkedAndEnabledProductList.reduce((prev, current) => {
+        if (current.amount > 0) {
+          return [...prev, current];
+        }
+        return prev;
+      }, []);
+    },
     subtotal() {
       let result = 0;
       this.checkedAndEnabledProductList.forEach((prod) => {
@@ -328,7 +336,9 @@ export default {
     ReadyToCheckoutHandler() {
       const ready2BeDeletedList = [];
       this.checkedAndEnabledProductList.forEach((prod) => {
-        ready2BeDeletedList.push(prod.id);
+        if (prod.amount > 0) {
+          ready2BeDeletedList.push(prod.id);
+        }
       });
 
       if (ready2BeDeletedList.length === 0) {
