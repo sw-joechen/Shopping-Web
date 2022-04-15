@@ -1,5 +1,4 @@
-﻿using System;
-namespace Shopping_Web.Class
+﻿namespace Shopping_Web.Class
 {
     public class ShoppingItem
     {

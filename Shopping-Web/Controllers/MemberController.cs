@@ -841,5 +841,105 @@ namespace Shopping_Web.Controllers
             }
             return result.Stringify();
         }
+
+        /// <summary>
+        /// 取得會員購買記錄清單
+        /// </summary>
+        [HttpPost]
+        [Route("api/{controller}/getMemberPurchaseHistory")]
+        public string GetMemberPurchaseHistory(PurchaseHistoryPayload payload)
+        {
+            Debug.WriteLine($"payload=> {JsonConvert.SerializeObject(payload)}");
+            Result result = new Result(100, "缺少參數");
+            List<PurchaseHistory> purchaseHistories = new List<PurchaseHistory> { };
+
+            if (payload == null || payload.account == null)
+            {
+                return result.Stringify();
+            }
+
+            // 檢查帳號
+            string account = payload.account;
+            AccountValidator accountValidator = new AccountValidator();
+            if (!accountValidator.IsAccountValid(account))
+            {
+                result.Set(103, "account not valid");
+                return result.Stringify();
+            }
+
+            // 時間預設為過去七天
+            DateTime dt = DateTime.UtcNow;
+            string startDate = payload.startDate ?? StartOfDay(dt.AddDays(-7)).ToString("yyyy-MM-ddTHH:mm:sssZ");
+            string dueDate = payload.dueDate ?? EndOfDay(dt).ToString("yyyy-MM-ddTHH:mm:sssZ");
+
+            Debug.WriteLine($"account=> {account}");
+            Debug.WriteLine($"startDate=> {startDate}");
+            Debug.WriteLine($"dueDate=> {dueDate}");
+
+            try
+            {
+                DataSet ds = new DataSet();
+                using (SqlConnection conn = new SqlConnection(connectString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("pro_saw_getMemberPurchaseHistory", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@account", account);
+                        cmd.Parameters.AddWithValue("@startDate", startDate);
+                        cmd.Parameters.AddWithValue("@dueDate", dueDate);
+                        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                        adapter.Fill(ds);
+                    }
+                }
+                DataTable tb_purchaseHistory = ds.Tables[0];
+                DataTable tb_subPurchaseHistory = ds.Tables[1];
+
+                foreach (DataRow row in tb_purchaseHistory.Rows)
+                {
+                    DataRow[] rows = tb_subPurchaseHistory.Select($"orderNumber = {row["orderNumber"]}");
+                    List<ShoppingItem> tempShoppingList = new List<ShoppingItem> { };
+
+                    foreach (DataRow r in rows)
+                    {
+                        tempShoppingList.Add(new ShoppingItem
+                        {
+                            id = Convert.ToInt32(r["productID"]),
+                            count = Convert.ToInt32(r["count"])
+                        });
+                    }
+
+                    purchaseHistories.Add(new PurchaseHistory
+                    {
+                        orderNumber = row["orderNumber"].ToString(),
+                        account = row["account"].ToString(),
+                        phone = row["phone"].ToString(),
+                        address = row["address"].ToString(),
+                        createdDate = ((DateTime)row["createdDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
+                        shoppingList = new List<ShoppingItem>(tempShoppingList)
+                    });
+                }
+                Debug.WriteLine($"tb_purchaseHistory=> {JsonConvert.SerializeObject(tb_purchaseHistory)}");
+                Debug.WriteLine($"tb_subPurchaseHistory=> {JsonConvert.SerializeObject(tb_subPurchaseHistory)}");
+                Debug.WriteLine($"purchaseHistories=> {JsonConvert.SerializeObject(purchaseHistories)}");
+                result.Set(200, "success", purchaseHistories);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ex: {ex}");
+                result.Set(101, "網路錯誤");
+            }
+            return result.Stringify();
+        }
+
+        private static DateTime StartOfDay(DateTime theDate)
+        {
+            return theDate.Date;
+        }
+
+        private static DateTime EndOfDay(DateTime theDate)
+        {
+            return theDate.Date.AddDays(1).AddTicks(-1);
+        }
     }
 }
