@@ -1,10 +1,9 @@
 ﻿<Properties StartupConfiguration="{008A27EE-0E9E-4CB9-8386-566232FA57B3}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Shopping-Web/Controllers/MemberController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Shopping-Web/Controllers/ProductController.cs">
     <Files>
-      <File FileName="Shopping-Web/Controllers/MemberController.cs" Line="835" Column="14" />
-      <File FileName="Shopping-Web/Controllers/ProductController.cs" Line="20" Column="9" />
-      <File FileName="Shopping-Web/Class/PurchasePayload.cs" Line="3" Column="16" NotebookId="1" />
-      <File FileName="Shopping-Web/Class/Product.cs" Line="16" Column="1" NotebookId="1" />
+      <File FileName="Shopping-Web/Controllers/MemberController.cs" Line="855" Column="1" />
+      <File FileName="Shopping-Web/Controllers/ProductController.cs" Line="119" Column="1" />
+      <File FileName="Shopping-Web/Class/GetProductListByIDPayload.cs" Line="6" Column="43" NotebookId="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -13,11 +12,24 @@
             <Node name="Shopping-Web" expanded="True">
               <Node name="Class" expanded="True" />
               <Node name="Controllers" expanded="True">
-                <Node name="MemberController.cs" selected="True" />
+                <Node name="ProductController.cs" selected="True" />
               </Node>
+              <Node name="Validators" expanded="True" />
               <Node name="Global.asax" expanded="True" />
             </Node>
           </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>payload</Value>
+          <Value>e</Value>
+          <Value>productList</Value>
+          <Value>r</Value>
+          <Value>r["f_id"]</Value>
+          <Value>cartItem</Value>
+          <Value>shoppingList</Value>
+          <Value>rejectCondition</Value>
         </State>
       </Pad>
     </Pads>
@@ -26,7 +38,9 @@
   <MonoDevelop.Ide.ItemProperties.Shopping-Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/snackboy/Documents/SW/repos/Shopping-Web/Shopping-Web/Class/PurchaseHistoryPayload.cs" relfile="Shopping-Web/Class/PurchaseHistoryPayload.cs" line="9" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
 </Properties>
