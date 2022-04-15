@@ -59,7 +59,7 @@
             <span
               class="w-5 h-5 inline-block rounded-[4px] border border-green3 transition-all duration-200 bg-white"
               :class="[
-                { 'opacity-50': !item.enabled },
+                { 'opacity-50': !item.enabled || item.amount === 0 },
                 { 'bg-green6 shadow-radioBtn1': item.checked },
               ]"
             />
@@ -70,19 +70,19 @@
           <img
             class="w-16 h-16"
             :src="redirectImg(item.picture)"
-            :class="{ 'opacity-50': !item.enabled }"
+            :class="{ 'opacity-50': !item.enabled || item.amount === 0 }"
           />
         </div>
 
         <!-- product -->
         <div
           class="product flex items-center p-2 w-[700px] flex-grow"
-          :class="{ 'opacity-50': !item.enabled }"
+          :class="{ 'opacity-50': !item.enabled || item.amount === 0 }"
         >
           <div
             :title="item.name"
             class="text-left break-all flex-grow overflow-hidden text-ellipsis font-bold text-lg"
-            :class="{ 'line-through': !item.enabled }"
+            :class="{ 'line-through': !item.enabled || item.amount === 0 }"
           >
             {{ item.name }}
           </div>
@@ -91,17 +91,22 @@
         <!-- price -->
         <div
           class="price flex justify-end items-center p-2 text-lg w-[110px]"
-          :class="{ 'line-through opacity-50': !item.enabled }"
+          :class="{
+            'line-through opacity-50': !item.enabled || item.amount === 0,
+          }"
         >
           $ {{ item.price }}
         </div>
 
         <!-- cartQuantity -->
-        <div
-          class="cartQuantity flex items-center p-2 w-36"
-          :class="{ 'pointer-events-none opacity-50': !item.enabled }"
-        >
-          <div class="flex h-10 w-full rounded-lg relative bg-transparent">
+        <div class="cartQuantity flex items-center p-2 w-36 relative">
+          <div
+            class="flex h-10 w-full rounded-lg relative bg-transparent"
+            :class="{
+              'pointer-events-none opacity-50':
+                !item.enabled || item.amount === 0,
+            }"
+          >
             <button
               @click="DecrementHandler(item)"
               class="decrement px-3 bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full rounded-l cursor-pointer outline-none"
@@ -121,6 +126,12 @@
             >
               <span class="m-auto text-2xl font-thin">+</span>
             </button>
+          </div>
+          <div
+            class="soldout absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-red-500 text-2xl"
+            v-if="item.amount === 0"
+          >
+            已售完
           </div>
         </div>
 
@@ -142,10 +153,7 @@
       </div>
     </div>
 
-    <div
-      class="summary flex max-w-[1200px] mx-auto"
-      :class="productList.length ? 'justify-between' : 'justify-end'"
-    >
+    <div class="summary flex max-w-[1200px] mx-auto justify-between">
       <div class="flex">
         <!-- selectAll -->
         <div class="selectAll flex items-center m-2" v-if="productList.length">
@@ -306,12 +314,16 @@ export default {
     subtotal() {
       let result = 0;
       this.checkedAndEnabledProductList.forEach((prod) => {
-        result += prod.price * prod.cartQuantity;
+        if (prod.amount > 0) {
+          result += prod.price * prod.cartQuantity;
+        }
       });
       return result;
     },
   },
-
+  created() {
+    this.$store.dispatch('shoppingCart/InitShoppingCart');
+  },
   methods: {
     ReadyToCheckoutHandler() {
       const ready2BeDeletedList = [];
@@ -371,15 +383,22 @@ export default {
       this.selectAll = false;
     },
     TotalDelHandler() {
+      const ready2BeDeletedList = [];
+      this.productList.forEach((el) => {
+        if (el.checked) {
+          ready2BeDeletedList.push(el.id);
+        }
+      });
+
+      if (!ready2BeDeletedList.length) {
+        return this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: '請勾選商品',
+        });
+      }
+
       const result = confirm('確定要刪除勾選的商品嗎');
       if (result) {
-        const ready2BeDeletedList = [];
-        this.productList.forEach((el) => {
-          if (el.checked) {
-            ready2BeDeletedList.push(el.id);
-          }
-        });
-
         this.BatchDeleteProductItem(ready2BeDeletedList);
         this.resetSelectAll();
       }

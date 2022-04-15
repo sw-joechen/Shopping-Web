@@ -1,4 +1,4 @@
-import { GetProductList } from '@/APIs/product';
+import { GetProductListByID } from '@/APIs/product';
 import { IsPureNumber } from '@/Utils/validators';
 
 const state = () => ({
@@ -33,12 +33,19 @@ const actions = {
       localStorage.removeItem('client_shopping_cart');
       lsList = [];
     }
+    const tempProductIDs = lsList.map((el) => el.id);
 
-    // TODO: 應該要改呼叫批次搜尋id的接口
     let productList = [];
-    const res = await GetProductList();
+    const res = await GetProductListByID({
+      productIdList: tempProductIDs,
+    });
     if (res.code === 200) {
       productList = res.data;
+    } else {
+      this.commit('eventBus/Push', {
+        type: 'error',
+        content: '網路錯誤',
+      });
     }
 
     // 初始化購物車

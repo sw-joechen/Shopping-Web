@@ -75,7 +75,7 @@ const GetProductList = () => {
         getRandom(0, 200) % 2 === 0
           ? '名稱拉；海法馬麼巴備制大利總下方氣形父音？'
           : '就行檢在是後沒陸這奇主，分灣天大山字不，列失裡產人這！是高案民保真像系覺死音消；配連試、同我合些流多',
-      amount: 1,
+      amount: getRandom(0, 200) % 2 === 0 ? 0 : 2,
       createdDate: '2022-03-17T15:43:55.653',
       description:
         getRandom(0, 200) % 2 === 0
@@ -136,4 +136,6 @@ if (process.env.NODE_ENV === 'development') {
 
   // product
   Mock.mock('/api/product/getProductsList', GetProductList);
+
+  Mock.mock('/api/product/getProductListByID', GetProductList);
 }
