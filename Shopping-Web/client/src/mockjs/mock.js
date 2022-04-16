@@ -119,6 +119,25 @@ const GetMemberPurchaseHistory = (payload) => {
   return JSON.stringify(result);
 };
 
+const Purchase = (payload) => {
+  const params = JSON.parse(payload.body);
+  const shoppingList = params.shoppingList;
+  let data = [];
+  shoppingList.forEach((prod) => {
+    data.push({
+      id: prod.id,
+      rejectCondition: getRandom(0, 3),
+    });
+  });
+
+  const result = {
+    code: 119,
+    msg: 'failt',
+    data: [{ id: 14, rejectCondition: 1 }],
+  };
+  return JSON.stringify(result);
+};
+
 //產生min到max之間的亂數
 const getRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -134,6 +153,7 @@ if (process.env.NODE_ENV === 'development') {
 
   Mock.mock('/api/member/getMemberPurchaseHistory', GetMemberPurchaseHistory);
 
+  Mock.mock('/api/member/purchase', Purchase);
   // product
   Mock.mock('/api/product/getProductsList', GetProductList);
 

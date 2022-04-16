@@ -88,6 +88,16 @@
           </div>
         </div>
 
+        <div
+          class="failHint flex items-center text-red-600"
+          v-if="IsShowProductAlert(item.id)"
+        >
+          <ErrorIcon
+            :title="GetProductAlertTitle(item.id)"
+            @click.native="CloseProductAlertHandler(item.id)"
+          />
+        </div>
+
         <!-- price -->
         <div
           class="price flex justify-end items-center p-2 text-lg w-[110px]"
@@ -275,17 +285,28 @@ import BtnPrimary from '@/components/BtnPrimary.vue';
 import FormDialog from '@/components/Dialogs/DialogView.vue';
 import { Purchase, GetMemberPersonalInfo } from '@/APIs/member';
 import ErrorCodeList from '@/ErrorCodeList';
+import ErrorIcon from '@/components/Notification.vue/children/ErrorIcon.vue';
+
+// rejectCondition=> 0: 狀態錯誤, 1:數量錯誤, 2:id在清單中匹配不到, 3:價格有異動
+const ERejectCondition = {
+  status: 0,
+  quantity: 1,
+  deleted: 2,
+  priceChanged: 3,
+};
 export default {
   name: 'shoppingCart',
   components: {
     BtnPrimary,
     FormDialog,
+    ErrorIcon,
   },
   data() {
     return {
       selectAll: false,
       isShowConfirmDialog: false,
       columns: ['名稱', '單價', '數量', '總計'],
+      rejectedProductList: [],
     };
   },
   computed: {
@@ -333,6 +354,38 @@ export default {
     this.$store.dispatch('shoppingCart/InitShoppingCart');
   },
   methods: {
+    CloseProductAlertHandler(payloadID) {
+      const idx = this.rejectedProductList.findIndex(
+        (el) => el.id === payloadID
+      );
+      if (idx !== -1) {
+        this.rejectedProductList.splice(idx, 1);
+      }
+    },
+    GetProductAlertTitle(payloadID) {
+      const result = this.rejectedProductList.find((el) => el.id === payloadID);
+      if (result) {
+        switch (result.rejectCondition) {
+          case ERejectCondition.status:
+            return '商品已被禁用';
+          case ERejectCondition.quantity:
+            return '請確認商品數量';
+          case ERejectCondition.deleted:
+            return '商品已被刪除';
+          case ERejectCondition.priceChanged:
+            return '商品價格異動，請確認商品';
+          default:
+            break;
+        }
+      }
+    },
+    IsShowProductAlert(payloadID) {
+      const result = this.rejectedProductList.find((el) => el.id === payloadID);
+      if (result) {
+        return true;
+      }
+      return false;
+    },
     ReadyToCheckoutHandler() {
       const ready2BeDeletedList = [];
       this.checkedAndEnabledProductList.forEach((prod) => {
@@ -352,7 +405,7 @@ export default {
     async SubmitCheckoutHandler() {
       const userBalance = await this.GetMemberBalance();
       if (userBalance >= this.subtotal) {
-        this.CheckoutHandler();
+        await this.CheckoutHandler();
         this.ToggleConfirmDialogHandler();
       } else {
         this.$store.commit('eventBus/Push', {
@@ -440,6 +493,7 @@ export default {
         shoppingList.push({
           id: el.id,
           count: el.cartQuantity,
+          price: el.price,
         });
       });
 
@@ -455,14 +509,20 @@ export default {
           type: 'success',
           content: '購買成功',
         });
-      } else {
+      } else if (res.code === 119) {
+        // 存取被拒絕的商品
+        this.rejectedProductList = res.data;
+
         this.$store.dispatch('shoppingCart/InitShoppingCart');
         this.resetSelectAll();
-        // TODO: 畫面錯誤處理
         this.$store.commit('eventBus/Push', {
           type: 'error',
-          // content: '請確認商品',
           content: ErrorCodeList[res.code],
+        });
+      } else {
+        this.$store.commit('eventBus/Push', {
+          type: 'error',
+          content: '網路錯誤',
         });
       }
     },

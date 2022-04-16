@@ -563,7 +563,7 @@ namespace Shopping_Web.Controllers
                     Debug.WriteLine($"productList=> {JsonConvert.SerializeObject(productList)}");
                 }
 
-                // rejectCondition=> 0: 狀態錯誤, 1:數量錯誤, 2:id在清單中匹配不到, 3:價格有異動                
+                // rejectCondition=> 0:狀態錯誤, 1:數量錯誤, 2:id在清單中匹配不到, 3:價格有異動                
                 int cash = 0;
                 List<RejectedProduct> rejectedProductList = new List<RejectedProduct> { };
 
