@@ -9,6 +9,6 @@ namespace Shopping_Web.Class
         public string phone { get; set; }
         public string address { get; set; }
         public string createdDate { get; set; }
-        public List<ShoppingItem> shoppingList { get; set; }
+        public List<HistoryPurchasedItem> shoppingList { get; set; }
     }
 }

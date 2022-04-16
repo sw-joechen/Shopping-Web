@@ -103,6 +103,10 @@
     <Compile Include="Class\PurchaseHistoryPayload.cs" />
     <Compile Include="Class\PurchaseHistory.cs" />
     <Compile Include="Class\GetProductListByIDPayload.cs" />
+    <Compile Include="Class\PurchaseItem.cs" />
+    <Compile Include="Class\PurchaseRecordPayload.cs" />
+    <Compile Include="Class\RejectedProduct.cs" />
+    <Compile Include="Class\HistoryPurchasedItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

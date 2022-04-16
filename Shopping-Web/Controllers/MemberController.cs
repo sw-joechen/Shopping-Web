@@ -508,7 +508,7 @@ namespace Shopping_Web.Controllers
             try
             {
                 string account = payload.account;
-                List<ShoppingItem> shoppingList = payload.shoppingList;                
+                List<PurchaseItem> shoppingList = payload.shoppingList;                
 
                 Debug.WriteLine($"payload=> {payload}");
                 Debug.WriteLine($"account=> {account}");
@@ -522,18 +522,22 @@ namespace Shopping_Web.Controllers
                     return result.Stringify();
                 }
 
+                // List轉成datatable
+                DataTable productDt = new DataTable();
+                productDt.Columns.Add("ID", typeof(int));
+                for (int i = 0; i < shoppingList.Count; i++)
+                {
+                    productDt.Rows.Add(shoppingList[i].id);
+                }
+
                 // 取得商品列表
-                // TODO: 改成呼叫批次指定商品id的接口
                 using (SqlConnection conn = new SqlConnection(connectString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("pro_saw_getProductList", conn))
+                    using (SqlCommand cmd = new SqlCommand("pro_sw_getProductListByID", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@id", DBNull.Value);
-                        cmd.Parameters.AddWithValue("@name", DBNull.Value);
-                        cmd.Parameters.AddWithValue("@type", DBNull.Value);
-                        cmd.Parameters.AddWithValue("@enabled", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@ids", productDt);
                         SqlDataReader r = cmd.ExecuteReader();
 
                         if (r.HasRows)
@@ -554,22 +558,17 @@ namespace Shopping_Web.Controllers
                                     updatedDate = r["f_updatedDate"].ToString(),
                                 });
                             }
-                            result.Set(200, "success", productList);
                         }
                     }
                     Debug.WriteLine($"productList=> {JsonConvert.SerializeObject(productList)}");
                 }
 
-                // 檢查購買清單中的商品是否可以被購買
-                bool isShoppingListAllValid = false;
-                int invalidProductItemID = -1;
-                // 0: 狀態錯誤, 1:數量錯誤, 2:id在清單中匹配不到
-                int rejectCondition = -1;
+                // rejectCondition=> 0: 狀態錯誤, 1:數量錯誤, 2:id在清單中匹配不到, 3:價格有異動                
                 int cash = 0;
+                List<RejectedProduct> rejectedProductList = new List<RejectedProduct> { };
 
-                foreach (ShoppingItem cartItem in shoppingList)
+                foreach (PurchaseItem cartItem in shoppingList)
                 {
-                    isShoppingListAllValid = false;
                     bool isFound = false;
                     foreach (Product prod in productList)
                     {
@@ -578,19 +577,29 @@ namespace Shopping_Web.Controllers
                             isFound = true;
                             if (!prod.enabled)
                             {
-                                invalidProductItemID = cartItem.id;
-                                rejectCondition = 0;
+                                rejectedProductList.Add(new RejectedProduct {
+                                    id=cartItem.id,
+                                    rejectCondition= 0
+                                });
                                 break;
                             }
                             else if (cartItem.count > prod.amount || cartItem.count <= 0)
                             {
-                                invalidProductItemID = cartItem.id;
-                                rejectCondition = 1;
+                                rejectedProductList.Add(new RejectedProduct
+                                {
+                                    id = cartItem.id,
+                                    rejectCondition = 1
+                                });
+                                break;
+                            } else if (cartItem.price != prod.price)
+                            {
+                                rejectedProductList.Add(new RejectedProduct
+                                {
+                                    id = cartItem.id,
+                                    rejectCondition = 3
+                                });
                                 break;
                             }
-
-                            // 商品ok
-                            isShoppingListAllValid = true;
 
                             // 累加消費金額
                             cash += (cartItem.count * prod.price);
@@ -603,44 +612,18 @@ namespace Shopping_Web.Controllers
                     // 購買清單含有未匹配的商品
                     if (!isFound)
                     {
-                        invalidProductItemID = cartItem.id;
-                        rejectCondition = 2;
+                        rejectedProductList.Add(new RejectedProduct
+                        {
+                            id = cartItem.id,
+                            rejectCondition = 2
+                        });
                         Debug.WriteLine($"== {cartItem.id} is not matched ==");
-                        break;
-                    }
-
-                    // 購買清單含有不合法商品(數量,狀態)
-                    if (!isShoppingListAllValid || invalidProductItemID != -1)
-                    {
-                        Debug.WriteLine($"== {cartItem.id} is invalid, break the loop ==");
-                        break;
                     }
                 }
 
-                if (!isShoppingListAllValid)
+                if (rejectedProductList.Count > 0)
                 {
-                    Object data = new { id = invalidProductItemID };
-                    switch (rejectCondition)
-                    {
-                        case 0:
-                            {
-                                result.Set(119, "結帳清單包含被禁用的商品", data);
-                                break;
-                            }
-                        case 1:
-                            {
-                                result.Set(120, "結帳清單包含無效的數量", data);
-                                break;
-                            }
-                        case 2:
-                            {
-                                result.Set(121, "結帳清單包含無效的商品", data);
-                                break;
-                            }
-                        default:
-                            break;
-
-                    }
+                    result.Set(119, "訂單商品異常, 請確認商品", rejectedProductList);                    
                     return result.Stringify();
                 }
                 else
@@ -680,7 +663,7 @@ namespace Shopping_Web.Controllers
                                 result.Set(108, "該帳號已被禁用");
                                 break;
                             case 102:
-                                result.Set(122, "餘額不足");
+                                result.Set(120, "餘額不足");
                                 break;
                             default:
                                 result.Set(101, "網路錯誤");
@@ -757,7 +740,7 @@ namespace Shopping_Web.Controllers
             try
             {
                 string account = payload.account;
-                List<ShoppingItem> shoppingList = payload.shoppingList;
+                List<PurchaseItem> shoppingList = payload.shoppingList;
                 DataTable shoppingTd = new DataTable();
                 shoppingTd = ToDataTable(shoppingList);
 
@@ -898,13 +881,15 @@ namespace Shopping_Web.Controllers
                 foreach (DataRow row in tb_purchaseHistory.Rows)
                 {
                     DataRow[] rows = tb_subPurchaseHistory.Select($"orderNumber = {row["orderNumber"]}");
-                    List<ShoppingItem> tempShoppingList = new List<ShoppingItem> { };
+                    List<HistoryPurchasedItem> tempShoppingList = new List<HistoryPurchasedItem> { };
 
                     foreach (DataRow r in rows)
                     {
-                        tempShoppingList.Add(new ShoppingItem
+                        tempShoppingList.Add(new HistoryPurchasedItem
                         {
                             id = Convert.ToInt32(r["productID"]),
+                            name = r["productName"].ToString(),
+                            price = Convert.ToInt32(r["productPrice"]),
                             count = Convert.ToInt32(r["count"])
                         });
                     }
@@ -916,7 +901,7 @@ namespace Shopping_Web.Controllers
                         phone = row["phone"].ToString(),
                         address = row["address"].ToString(),
                         createdDate = ((DateTime)row["createdDate"]).ToString("yyyy-MM-ddTHH:mm:sssZ"),
-                        shoppingList = new List<ShoppingItem>(tempShoppingList)
+                        shoppingList = new List<HistoryPurchasedItem>(tempShoppingList)
                     });
                 }
                 Debug.WriteLine($"tb_purchaseHistory=> {JsonConvert.SerializeObject(tb_purchaseHistory)}");
