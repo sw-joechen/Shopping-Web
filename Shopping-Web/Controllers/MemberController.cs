@@ -740,7 +740,15 @@ namespace Shopping_Web.Controllers
             try
             {
                 string account = payload.account;
-                List<PurchaseItem> shoppingList = payload.shoppingList;
+                List<ShoppingItem> shoppingList = new List<ShoppingItem> { };
+                foreach (PurchaseItem item in payload.shoppingList)
+                {
+                    shoppingList.Add(new ShoppingItem {
+                        id = item.id,
+                        count = item.count
+                    });
+                }
+
                 DataTable shoppingTd = new DataTable();
                 shoppingTd = ToDataTable(shoppingList);
 
