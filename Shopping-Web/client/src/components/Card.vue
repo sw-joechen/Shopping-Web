@@ -42,6 +42,7 @@
             <BtnPrimary
               theme="green"
               class="whitespace-nowrap"
+              :disabled="product.amount <= 0"
               label="加入購物車"
               @submit="AddToCartHandler"
               px="px-2"
@@ -49,6 +50,7 @@
             <BtnPrimary
               label="結帳"
               @submit="CheckoutHandler"
+              :disabled="product.amount <= 0"
               theme="red"
               px="px-3"
             />
