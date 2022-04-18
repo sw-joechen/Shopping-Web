@@ -35,18 +35,23 @@
           </div>
         </div>
         <div class="bottom flex px-1 py-2">
-          <div class="price leading-10 text-xl text-red2 mr-2">
+          <div class="price leading-10 text-xl text-red2 mr-1 w-[48%]">
             <span class="text-base">$</span>{{ product.price }}
           </div>
           <div class="btnsWrapper flex justify-between flex-grow">
-            <BtnPrimary
-              theme="green"
-              class="whitespace-nowrap"
-              :disabled="product.amount <= 0"
-              label="加入購物車"
-              @submit="AddToCartHandler"
-              px="px-2"
-            />
+            <div class="cartBtnContainer relative mr-1 pointer-events-none">
+              <BtnPrimary
+                theme="green"
+                class="whitespace-nowrap pointer-events-auto"
+                :disabled="product.amount <= 0"
+                @submit="AddToCartHandler"
+                px="px-2"
+                width="w-14"
+              />
+              <ShoppingCartIcon
+                class="w-7 h-7 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              />
+            </div>
             <BtnPrimary
               label="結帳"
               @submit="CheckoutHandler"
@@ -63,10 +68,12 @@
 
 <script>
 import BtnPrimary from '@/components/BtnPrimary.vue';
+import ShoppingCartIcon from '@/components/Notification.vue/children/ShoppingCartIcon.vue';
 export default {
   name: 'cardView',
   components: {
     BtnPrimary,
+    ShoppingCartIcon,
   },
   props: {
     // id: number,

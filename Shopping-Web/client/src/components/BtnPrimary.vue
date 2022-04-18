@@ -1,9 +1,14 @@
 <template>
-  <div class="btnPrimary">
+  <div class="btnPrimary h-full">
     <button
       @click="ClickHandler"
-      :class="[getTheme, { 'cursor-not-allowed opacity-80': disabled }, px]"
-      class="text-white font-bold py-2 rounded"
+      :class="[
+        width,
+        getTheme,
+        { 'cursor-not-allowed opacity-80': disabled },
+        px,
+      ]"
+      class="text-white font-bold py-2 rounded h-full"
       :disabled="disabled"
     >
       {{ label }}
