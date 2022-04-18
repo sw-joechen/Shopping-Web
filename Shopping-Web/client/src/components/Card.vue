@@ -29,7 +29,10 @@
           {{ product.description }}
         </div>
         <div class="amount flex justify-end mt-1 px-5">
-          <div>剩餘數量 {{ product.amount }}</div>
+          <div v-if="product.amount <= 0" class="text-red-600 mr-2">已售完</div>
+          <div :class="{ 'line-through': product.amount <= 0 }">
+            剩餘數量 {{ product.amount }}
+          </div>
         </div>
         <div class="bottom flex px-1 py-2">
           <div class="price leading-10 text-xl text-red2 mr-2">
