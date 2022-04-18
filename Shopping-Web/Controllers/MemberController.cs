@@ -28,8 +28,8 @@ namespace Shopping_Web.Controllers
             Result result = new Result(100, "缺少參數");
             var httpRequest = HttpContext.Current.Request;
 
-            if (httpRequest.Params["account"] == null || httpRequest.Params["pwd"] == null || httpRequest.Params["address"] == null || 
-                httpRequest.Params["phone"] == null || httpRequest.Params["gender"] == null || httpRequest.Params["email"] == null )
+            if (httpRequest.Params["account"] == null || httpRequest.Params["pwd"] == null || httpRequest.Params["address"] == null ||
+                httpRequest.Params["phone"] == null || httpRequest.Params["gender"] == null || httpRequest.Params["email"] == null)
             {
                 result.Set(100, "缺少參數");
                 return result.Stringify();
@@ -140,7 +140,7 @@ namespace Shopping_Web.Controllers
             Result result = new Result(100, "缺少參數");
             var httpRequest = HttpContext.Current.Request;
 
-            if (httpRequest.Params["account"] == null || httpRequest.Params["address"] == null || httpRequest.Params["phone"] == null || 
+            if (httpRequest.Params["account"] == null || httpRequest.Params["address"] == null || httpRequest.Params["phone"] == null ||
                 httpRequest.Params["gender"] == null || httpRequest.Params["email"] == null)
             {
                 result.Set(100, "缺少參數");
@@ -435,7 +435,7 @@ namespace Shopping_Web.Controllers
             Result result = new Result(100, "缺少參數");
             List<Member> memberList = new List<Member> { };
 
-            if (httpRequest.Params["account"] == null )
+            if (httpRequest.Params["account"] == null)
             {
                 result.Set(100, "缺少參數");
                 return result.Stringify();
@@ -508,7 +508,7 @@ namespace Shopping_Web.Controllers
             try
             {
                 string account = payload.account;
-                List<PurchaseItem> shoppingList = payload.shoppingList;                
+                List<PurchaseItem> shoppingList = payload.shoppingList;
 
                 Debug.WriteLine($"payload=> {payload}");
                 Debug.WriteLine($"account=> {account}");
@@ -577,9 +577,10 @@ namespace Shopping_Web.Controllers
                             isFound = true;
                             if (!prod.enabled)
                             {
-                                rejectedProductList.Add(new RejectedProduct {
-                                    id=cartItem.id,
-                                    rejectCondition= 0
+                                rejectedProductList.Add(new RejectedProduct
+                                {
+                                    id = cartItem.id,
+                                    rejectCondition = 0
                                 });
                                 break;
                             }
@@ -591,7 +592,8 @@ namespace Shopping_Web.Controllers
                                     rejectCondition = 1
                                 });
                                 break;
-                            } else if (cartItem.price != prod.price)
+                            }
+                            else if (cartItem.price != prod.price)
                             {
                                 rejectedProductList.Add(new RejectedProduct
                                 {
@@ -623,7 +625,7 @@ namespace Shopping_Web.Controllers
 
                 if (rejectedProductList.Count > 0)
                 {
-                    result.Set(119, "訂單商品異常, 請確認商品", rejectedProductList);                    
+                    result.Set(119, "訂單商品異常, 請確認商品", rejectedProductList);
                     return result.Stringify();
                 }
                 else
@@ -651,7 +653,8 @@ namespace Shopping_Web.Controllers
                             }
                         }
 
-                        switch (sqlResponse){
+                        switch (sqlResponse)
+                        {
                             case 200:
                                 AddPurchaseRecord(payload);
                                 result.Set(200, "success");
@@ -670,7 +673,7 @@ namespace Shopping_Web.Controllers
                                 break;
                         }
                     }
-                }                
+                }
             }
             catch (Exception e)
             {
@@ -743,7 +746,8 @@ namespace Shopping_Web.Controllers
                 List<ShoppingItem> shoppingList = new List<ShoppingItem> { };
                 foreach (PurchaseItem item in payload.shoppingList)
                 {
-                    shoppingList.Add(new ShoppingItem {
+                    shoppingList.Add(new ShoppingItem
+                    {
                         id = item.id,
                         count = item.count
                     });
@@ -787,16 +791,16 @@ namespace Shopping_Web.Controllers
                                 memberInfo.enabled = Convert.ToBoolean(Convert.ToInt16(r["f_enabled"]));
                                 memberInfo.createdDate = r["f_createdDate"].ToString();
                                 memberInfo.updatedDate = r["f_updatedDate"].ToString();
-                                memberInfo.balance = Convert.ToDouble(r["f_balance"]);                                
+                                memberInfo.balance = Convert.ToDouble(r["f_balance"]);
                             }
-                        }                        
+                        }
                     }
                 }
                 Debug.WriteLine($"memberInfo=> {JsonConvert.SerializeObject(memberInfo)}");
                 string accountID = memberInfo.id.ToString("00000000");
 
                 // 組出訂單編號
-                string orderNumber = year+month+day+hour+minute+second+accountID;
+                string orderNumber = year + month + day + hour + minute + second + accountID;
                 string createdDate = dt.ToString("yyyy-MM-ddTHH:mm:sssZ");
 
                 using (SqlConnection conn = new SqlConnection(connectString))

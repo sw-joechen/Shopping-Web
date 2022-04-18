@@ -130,7 +130,7 @@ namespace Shopping_Web.Controllers
             }
 
             try
-            {                
+            {
                 List<int> productIDList = payload.productIdList;
 
                 // List轉成datatable
