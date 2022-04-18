@@ -35,6 +35,7 @@ export default {
     LogoutHandler() {
       this.ToggleHandler();
       this.$store.commit('user/clearUser');
+      this.$router.replace({ name: 'home' });
     },
   },
 };

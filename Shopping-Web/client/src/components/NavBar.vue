@@ -29,6 +29,7 @@
             type="text"
             class="input"
             :placeholder="$t('common.accountPlaceholder')"
+            @keypress.enter="LoginHandler"
           />
         </div>
 
@@ -42,6 +43,7 @@
             type="password"
             class="input"
             :placeholder="$t('common.pwdPlaceholder')"
+            @keypress.enter="LoginHandler"
           />
         </div>
 
@@ -153,10 +155,6 @@ export default {
     },
     ToggleHandler() {
       this.$emit('toggle');
-    },
-    LogoutHandler() {
-      this.ToggleHandler();
-      this.$store.commit('user/clearUser');
     },
     ClearInputs() {
       this.account = '';
