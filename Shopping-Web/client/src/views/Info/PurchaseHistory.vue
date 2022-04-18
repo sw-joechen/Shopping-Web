@@ -58,7 +58,7 @@ export default {
       if (!this.dateTime[1]) return null;
 
       const date = new Date(this.dateTime[1]);
-      return DateTime.fromJSDate(date).toUTC().endOf('day').toISO();
+      return DateTime.fromJSDate(date).endOf('day').toUTC().toISO();
     },
   },
   methods: {
