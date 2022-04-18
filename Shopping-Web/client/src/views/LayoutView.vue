@@ -1,6 +1,6 @@
 <template>
   <div class="layoutView p-2 min-h-screen bg-black4">
-    <NavBar @toggle="ToggleHandler" />
+    <NavBar @toggle="ToggleHandler" class="mb-3" />
     <router-view />
 
     <ConfirmDialog
