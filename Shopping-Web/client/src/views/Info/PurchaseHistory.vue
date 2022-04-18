@@ -28,7 +28,7 @@ export default {
   },
   data() {
     return {
-      dateTime: [null, null],
+      dateTime: [this.getSevenDaysAgo(), this.getEndOfToday()],
       /**
        * {
        *    orderNumber:string,
@@ -61,6 +61,9 @@ export default {
       return DateTime.fromJSDate(date).endOf('day').toUTC().toISO();
     },
   },
+  created() {
+    this.SearchHandler();
+  },
   methods: {
     async SearchHandler() {
       const account = this.$store.state.user.account;
@@ -78,6 +81,19 @@ export default {
           content: ErrorCodeList[res.code],
         });
       }
+    },
+    getEndOfToday() {
+      return new Date(new Date().setHours(23, 59, 59, 999));
+    },
+    getSevenDaysAgo() {
+      return new Date(
+        new Date(new Date().setDate(new Date().getDate() - 7)).setHours(
+          0,
+          0,
+          0,
+          0
+        )
+      );
     },
   },
 };
