@@ -1,5 +1,6 @@
 import { GetProductListByID } from '@/APIs/product';
 import { IsPureNumber } from '@/Utils/validators';
+import Cookies from 'js-cookie';
 
 const state = () => ({
   // {
@@ -24,13 +25,14 @@ const getters = {};
 const actions = {
   async InitShoppingCart(context) {
     let lsList = [];
+    const user = Cookies.get('client_account');
     // 從localStorage取出暫存清單
     try {
-      if (localStorage.getItem('client_shopping_cart'))
-        lsList = JSON.parse(localStorage.getItem('client_shopping_cart'));
+      if (localStorage.getItem(`${user}_shopping_cart`))
+        lsList = JSON.parse(localStorage.getItem(`${user}_shopping_cart`));
     } catch (e) {
       // 防止ls塞奇怪的東西
-      localStorage.removeItem('client_shopping_cart');
+      localStorage.removeItem(`${user}_shopping_cart`);
       lsList = [];
     }
     const tempProductIDs = lsList.map((el) => el.id);
@@ -139,13 +141,14 @@ const mutations = {
     // cartQuantity
     // 每一次的新刪修都會觸發同步LS, 這時候會清除已經記在LS但是被刪掉的商品
     const ls = [];
+    const user = Cookies.get('client_account');
     state.shoppingCart.forEach((product) => {
       ls.push({
         id: product.id,
         cartQuantity: product.cartQuantity,
       });
     });
-    localStorage.setItem('client_shopping_cart', JSON.stringify(ls));
+    localStorage.setItem(`${user}_shopping_cart`, JSON.stringify(ls));
   },
 };
 
