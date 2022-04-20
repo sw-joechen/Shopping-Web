@@ -426,7 +426,7 @@ export default {
           type: 'error',
           content: '網路錯誤',
         });
-        return null;
+        return 0;
       }
     },
     ToggleConfirmDialogHandler() {
