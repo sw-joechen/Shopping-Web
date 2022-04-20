@@ -21,7 +21,7 @@ export const GetProductListByID = (data) => {
     data,
   })
     .then((res) => {
-      return JSON.parse(res.data);
+      return res.data;
     })
     .catch((err) => {
       console.log('err: ', err);

@@ -5,7 +5,7 @@ namespace Shopping_Web.Class {
         public int code;
         public string msg;
         public object data = null;
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         public Result(int code, string msg) {
             this.code = code;
@@ -19,7 +19,7 @@ namespace Shopping_Web.Class {
         }
         public string Stringify() {
             string result = JsonConvert.SerializeObject(this, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
-            Logger.Info($"result: {result}");
+            LOGGER.Info($"result: {result}");
             return result;
         }
     }

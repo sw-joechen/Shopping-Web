@@ -14,7 +14,7 @@ using Shopping_Web.Validators;
 namespace Shopping_Web.Controllers {
     public class MemberController : ApiController {
         readonly string connectString = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["ConnDB"].ConnectionString;
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// 註冊帳號
@@ -38,7 +38,7 @@ namespace Shopping_Web.Controllers {
                 string phone = httpRequest.Params["phone"];
                 int gender = Convert.ToInt32(httpRequest.Params["gender"]);
                 string email = httpRequest.Params["email"];
-                Logger.Info($"API: registerMember, account: {account}, pwd: {pwd}, address: {address}, phone: {phone}, gender: {gender}, email: {email}");
+                LOGGER.Info($"API: registerMember, account: {account}, pwd: {pwd}, address: {address}, phone: {phone}, gender: {gender}, email: {email}");
 
                 AccountValidator accValidator = new AccountValidator();
                 PwdValidator pwdValidator = new PwdValidator();
@@ -102,7 +102,7 @@ namespace Shopping_Web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -131,7 +131,7 @@ namespace Shopping_Web.Controllers {
                 int gender = Convert.ToInt32(httpRequest.Params["gender"]);
                 string email = httpRequest.Params["email"];
 
-                Logger.Info($"API: updateMember, account: {account}, address: {address}, phone: {phone}, gender: {gender}, email: {email}");
+                LOGGER.Info($"API: updateMember, account: {account}, address: {address}, phone: {phone}, gender: {gender}, email: {email}");
 
                 AccountValidator accValidator = new AccountValidator();
                 PwdValidator pwdValidator = new PwdValidator();
@@ -185,7 +185,7 @@ namespace Shopping_Web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -214,7 +214,7 @@ namespace Shopping_Web.Controllers {
                 // Hash new password
                 string hashedNewPwd = SecurePasswordHasher.Hash(newPwd);
 
-                Logger.Info($"API: updateMemberPwd, account: {account}, oldPwd: {oldPwd}, newPwd: {newPwd}");
+                LOGGER.Info($"API: updateMemberPwd, account: {account}, oldPwd: {oldPwd}, newPwd: {newPwd}");
 
                 PwdValidator pwdValidator = new PwdValidator();
 
@@ -246,7 +246,7 @@ namespace Shopping_Web.Controllers {
                         conn.Close();
                     }
                 }
-                Logger.Info($"dict: {JsonConvert.SerializeObject(dict)}");
+                LOGGER.Info($"dict: {JsonConvert.SerializeObject(dict)}");
 
                 // check status
                 if (Convert.ToInt16(dict["enabled"]) == 0) {
@@ -277,7 +277,7 @@ namespace Shopping_Web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -302,7 +302,7 @@ namespace Shopping_Web.Controllers {
                 string account = httpRequest.Params["account"];
                 string pwd = httpRequest.Params["pwd"];
 
-                Logger.Info($"API: login, account: {account}, pwd: {pwd}");
+                LOGGER.Info($"API: login, account: {account}, pwd: {pwd}");
 
                 // Hash password
                 string hashedPwd = SecurePasswordHasher.Hash(pwd);
@@ -353,7 +353,7 @@ namespace Shopping_Web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
 
@@ -377,7 +377,7 @@ namespace Shopping_Web.Controllers {
 
             try {
                 string account = httpRequest.Params["account"];
-                Logger.Info($"API: getMemberPersonalInfo, account: {account}");
+                LOGGER.Info($"API: getMemberPersonalInfo, account: {account}");
 
                 using (SqlConnection conn = new SqlConnection(connectString)) {
                     conn.Open();
@@ -408,7 +408,7 @@ namespace Shopping_Web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -431,7 +431,7 @@ namespace Shopping_Web.Controllers {
             try {
                 string account = payload.account;
                 List<PurchaseItem> shoppingList = payload.shoppingList;
-                Logger.Info($"API: purchase, payload: {JsonConvert.SerializeObject(payload)}");
+                LOGGER.Info($"API: purchase, payload: {JsonConvert.SerializeObject(payload)}");
 
                 AccountValidator accountValidator = new AccountValidator();
                 // 檢查帳號
@@ -472,7 +472,7 @@ namespace Shopping_Web.Controllers {
                             }
                         }
                     }
-                    Logger.Info($"productList: {JsonConvert.SerializeObject(productList)}");
+                    LOGGER.Info($"productList: {JsonConvert.SerializeObject(productList)}");
                 }
 
                 // rejectCondition=> 0:狀態錯誤, 1:數量錯誤, 2:id在清單中匹配不到, 3:價格有異動                
@@ -509,7 +509,7 @@ namespace Shopping_Web.Controllers {
                             // 累加消費金額
                             cash += (cartItem.count * prod.price);
                             shoppingCartDict.Add(cartItem.id, cartItem.count);
-                            Logger.Info($"{cartItem.id} is valid");
+                            LOGGER.Info($"{cartItem.id} is valid");
                             break;
                         }
                     }
@@ -520,7 +520,7 @@ namespace Shopping_Web.Controllers {
                             id = cartItem.id,
                             rejectCondition = 2
                         });
-                        Logger.Info($"{cartItem.id} is not matched");
+                        LOGGER.Info($"{cartItem.id} is not matched");
                     }
                 }
 
@@ -535,7 +535,7 @@ namespace Shopping_Web.Controllers {
                         //convert to DataTable
                         var dt = ConvertToDataTable(shoppingCartDict);
 
-                        Logger.Info($"cash: {cash}");
+                        LOGGER.Info($"cash: {cash}");
                         conn.Open();
                         using (SqlCommand cmd = new SqlCommand("pro_sw_editMemberAndEditProduct", conn)) {
                             cmd.CommandType = CommandType.StoredProcedure;
@@ -570,7 +570,7 @@ namespace Shopping_Web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -623,7 +623,7 @@ namespace Shopping_Web.Controllers {
                 return result.Stringify();
             }
 
-            Logger.Info($"API: AddPurchaseRecord, payload: {JsonConvert.SerializeObject(payload)}");
+            LOGGER.Info($"API: AddPurchaseRecord, payload: {JsonConvert.SerializeObject(payload)}");
 
             try {
                 string account = payload.account;
@@ -646,8 +646,8 @@ namespace Shopping_Web.Controllers {
                 string minute = dt.Minute.ToString("00");
                 string second = dt.Second.ToString("00");
 
-                Logger.Info($"shoppingList: {JsonConvert.SerializeObject(shoppingList)}");
-                Logger.Info($"shoppingTd: {JsonConvert.SerializeObject(shoppingTd)}");
+                LOGGER.Info($"shoppingList: {JsonConvert.SerializeObject(shoppingList)}");
+                LOGGER.Info($"shoppingTd: {JsonConvert.SerializeObject(shoppingTd)}");
 
                 // 進庫撈會員資訊
                 using (SqlConnection conn = new SqlConnection(connectString)) {
@@ -673,7 +673,7 @@ namespace Shopping_Web.Controllers {
                         }
                     }
                 }
-                Logger.Info($"memberInfo: {JsonConvert.SerializeObject(memberInfo)}");
+                LOGGER.Info($"memberInfo: {JsonConvert.SerializeObject(memberInfo)}");
                 string accountID = memberInfo.id.ToString("00000000");
 
                 // 組出訂單編號
@@ -703,7 +703,7 @@ namespace Shopping_Web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -721,7 +721,7 @@ namespace Shopping_Web.Controllers {
             if (payload == null || payload.account == null) {
                 return result.Stringify();
             }
-            Logger.Info($"API: getMemberPurchaseHistory, payload: {JsonConvert.SerializeObject(payload)}");
+            LOGGER.Info($"API: getMemberPurchaseHistory, payload: {JsonConvert.SerializeObject(payload)}");
 
             // 檢查帳號
             string account = payload.account;
@@ -735,7 +735,7 @@ namespace Shopping_Web.Controllers {
             DateTime dt = DateTime.UtcNow;
             string startDate = payload.startDate ?? StartOfDay(dt.AddDays(-7)).ToString("yyyy-MM-ddTHH:mm:sssZ");
             string dueDate = payload.dueDate ?? EndOfDay(dt).ToString("yyyy-MM-ddTHH:mm:sssZ");
-            Logger.Info($"startDate: {startDate}, dueDate: {dueDate}");
+            LOGGER.Info($"startDate: {startDate}, dueDate: {dueDate}");
 
             try {
                 DataSet ds = new DataSet();
@@ -775,11 +775,11 @@ namespace Shopping_Web.Controllers {
                         shoppingList = new List<HistoryPurchasedItem>(tempShoppingList)
                     });
                 }
-                Logger.Info($"tb_purchaseHistory: {tb_purchaseHistory}, tb_subPurchaseHistory: {tb_subPurchaseHistory}, purchaseHistories: {purchaseHistories}");
+                LOGGER.Info($"tb_purchaseHistory: {tb_purchaseHistory}, tb_subPurchaseHistory: {tb_subPurchaseHistory}, purchaseHistories: {purchaseHistories}");
                 result.Set(200, "success", purchaseHistories);
             }
             catch (Exception ex) {
-                Logger.Error(ex);
+                LOGGER.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
