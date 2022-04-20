@@ -144,15 +144,16 @@ namespace Shopping_Web.Controllers {
                                     updatedDate = r["f_updatedDate"].ToString(),
                                 });
                             }
-                            result.Set(200, "success", productList);
                         }
                     }
                 }
+                result.Set(200, "success", productList);
             }
             catch (Exception ex) {
                 Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
+            Logger.Info($"result: {JsonConvert.SerializeObject(result)}");
             return result;
         }
     }
