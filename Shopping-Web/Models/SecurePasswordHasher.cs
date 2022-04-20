@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace Shopping_Web.Models
-{
-    public class SecurePasswordHasher
-    {
+namespace Shopping_Web.Models {
+    public class SecurePasswordHasher {
         /// <summary>
         /// Size of salt.
         /// </summary>
@@ -21,8 +19,7 @@ namespace Shopping_Web.Models
         /// <param name="password">The password.</param>
         /// <param name="iterations">Number of iterations.</param>
         /// <returns>The hash.</returns>
-        public static string Hash(string password, int iterations)
-        {
+        public static string Hash(string password, int iterations) {
             // Create salt
             byte[] salt;
             new RNGCryptoServiceProvider().GetBytes(salt = new byte[SaltSize]);
@@ -48,8 +45,7 @@ namespace Shopping_Web.Models
         /// </summary>
         /// <param name="password">The password.</param>
         /// <returns>The hash.</returns>
-        public static string Hash(string password)
-        {
+        public static string Hash(string password) {
             return Hash(password, 10000);
         }
 
@@ -58,8 +54,7 @@ namespace Shopping_Web.Models
         /// </summary>
         /// <param name="hashString">The hash.</param>
         /// <returns>Is supported?</returns>
-        public static bool IsHashSupported(string hashString)
-        {
+        public static bool IsHashSupported(string hashString) {
             return hashString.Contains("$MYHASH$V1$");
         }
 
@@ -69,11 +64,9 @@ namespace Shopping_Web.Models
         /// <param name="password">The password.</param>
         /// <param name="hashedPassword">The hash.</param>
         /// <returns>Could be verified?</returns>
-        public static bool Verify(string password, string hashedPassword)
-        {
+        public static bool Verify(string password, string hashedPassword) {
             // Check hash
-            if (!IsHashSupported(hashedPassword))
-            {
+            if (!IsHashSupported(hashedPassword)) {
                 throw new NotSupportedException("The hashtype is not supported");
             }
 
@@ -94,10 +87,8 @@ namespace Shopping_Web.Models
             byte[] hash = pbkdf2.GetBytes(HashSize);
 
             // Get result
-            for (var i = 0; i < HashSize; i++)
-            {
-                if (hashBytes[i + SaltSize] != hash[i])
-                {
+            for (var i = 0; i < HashSize; i++) {
+                if (hashBytes[i + SaltSize] != hash[i]) {
                     return false;
                 }
             }

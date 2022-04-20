@@ -2,8 +2,19 @@
 
 namespace Shopping_Web.Class {
     public class Result {
+        /// <summary>
+        /// 回應代號
+        /// </summary>
         public int code;
+
+        /// <summary>
+        /// 回應訊息
+        /// </summary>
         public string msg;
+
+        /// <summary>
+        /// 回應資料
+        /// </summary>
         public object data = null;
         private static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
