@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Reflection;
 using System.Web;
 using System.Web.Http;
 using Newtonsoft.Json;
@@ -12,6 +10,7 @@ using Shopping_Web.Class;
 namespace Shopping_Web.Controllers {
     public class ProductController : ApiController {
         string connectString = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["ConnDB"].ConnectionString;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// 取得商品清單
@@ -32,10 +31,7 @@ namespace Shopping_Web.Controllers {
                 int enabled = paramEnabled != null ? Convert.ToInt32(Convert.ToBoolean(paramEnabled)) : -1;
                 int id = paramID != null ? Convert.ToInt32(paramID) : -1;
 
-                Debug.WriteLine($"id=> {id}");
-                Debug.WriteLine($"name=> {name}");
-                Debug.WriteLine($"type=> {type}");
-                Debug.WriteLine($"enabled=> {enabled}");
+                Logger.Info($"API: getProductsList, id: {id}, name: {name}, type: {type}, enabled: {enabled}");
 
                 using (SqlConnection conn = new SqlConnection(connectString)) {
                     conn.Open();
@@ -81,7 +77,6 @@ namespace Shopping_Web.Controllers {
                                 });
                             }
                             result.Set(200, "success", productList);
-                            Debug.WriteLine($"productList=> {JsonConvert.SerializeObject(productList)}");
                         }
                         else {
                             result.Set(112, "找不到該商品");
@@ -90,7 +85,7 @@ namespace Shopping_Web.Controllers {
                 }
             }
             catch (Exception ex) {
-                Debug.WriteLine($"ex: {ex}");
+                Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result.Stringify();
@@ -101,75 +96,10 @@ namespace Shopping_Web.Controllers {
         /// </summary>
         [HttpPost]
         [Route("api/{controller}/getProductListByID")]
-        public string GetProductListByID([FromBody] GetProductListByIDPayload payload) {
-            Result result = new Result(100, "缺少參數");
-            List<Product> productList = new List<Product> { };
-
-            Debug.WriteLine($"payload=> {JsonConvert.SerializeObject(payload)}");
-            if (payload == null || payload.productIdList == null) {
-                return result.Stringify();
-            }
-
-            // 帶空陣列進來直接回空陣列結束
-            if (payload.productIdList.Count == 0) {
-                result.Set(200, "success", productList);
-            }
-
-            try {
-                List<int> productIDList = payload.productIdList;
-
-                // List轉成datatable
-                DataTable productDt = new DataTable();
-                productDt.Columns.Add("ID", typeof(int));
-                for (int i = 0; i < productIDList.Count; i++) {
-                    productDt.Rows.Add(productIDList[i]);
-                }
-
-                using (SqlConnection conn = new SqlConnection(connectString)) {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("pro_sw_getProductListByID", conn)) {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@ids", productDt);
-                        SqlDataReader r = cmd.ExecuteReader();
-
-                        if (r.HasRows) {
-                            while (r.Read()) {
-                                productList.Add(new Product {
-                                    id = Convert.ToInt32(r["f_id"]),
-                                    name = r["f_name"].ToString(),
-                                    description = r["f_description"].ToString(),
-                                    price = Convert.ToInt32(r["f_price"]),
-                                    picture = $"/Uploads{r["f_picture"]}",
-                                    amount = Convert.ToInt32(r["f_amount"]),
-                                    type = r["f_type"].ToString(),
-                                    enabled = Convert.ToBoolean(Convert.ToInt16(r["f_enabled"])),
-                                    createdDate = r["f_createdDate"].ToString(),
-                                    updatedDate = r["f_updatedDate"].ToString(),
-                                });
-                            }
-                            result.Set(200, "success", productList);
-                            Debug.WriteLine($"productList=> {JsonConvert.SerializeObject(productList)}");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex) {
-                Debug.WriteLine($"ex: {ex}");
-                result.Set(101, "網路錯誤");
-            }
-            return result.Stringify();
-        }
-
-        /// <summary>
-        /// demo
-        /// </summary>
-        [HttpPost]
-        [Route("api/{controller}/DemoGetProductListByID")]
-        public DemoResult<List<Product>> DemoGetProductListByID([FromBody] GetProductListByIDPayload payload) {
+        public DemoResult<List<Product>> GetProductListByID([FromBody] GetProductListByIDPayload payload) {
             var result = new DemoResult<List<Product>>(100, "缺少參數");
             List<Product> productList = new List<Product> { };
 
-            Debug.WriteLine($"payload=> {JsonConvert.SerializeObject(payload)}");
             if (payload == null || payload.productIdList == null) {
                 return result;
             }
@@ -179,6 +109,8 @@ namespace Shopping_Web.Controllers {
                 result.Set(200, "success", productList);
                 return result;
             }
+
+            Logger.Info($"API: getProductListByID, payload: {JsonConvert.SerializeObject(payload)}");
 
             try {
                 List<int> productIDList = payload.productIdList;
@@ -213,13 +145,12 @@ namespace Shopping_Web.Controllers {
                                 });
                             }
                             result.Set(200, "success", productList);
-                            Debug.WriteLine($"productList=> {JsonConvert.SerializeObject(productList)}");
                         }
                     }
                 }
             }
             catch (Exception ex) {
-                Debug.WriteLine($"ex: {ex}");
+                Logger.Error(ex);
                 result.Set(101, "網路錯誤");
             }
             return result;
